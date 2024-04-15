@@ -1,0 +1,16 @@
+.section {
+    width: 100%;
+    padding: 1em;
+    overflow: auto;
+}
+
+.underline {
+    height: 2px;
+    background-color: #d8d8d8;
+}
+
+.text {
+    color: #d8d8d8;
+    font-size: 18px;
+}
+

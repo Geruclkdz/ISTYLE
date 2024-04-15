@@ -1,0 +1,12 @@
+img.Clothes{
+    width: 8em;
+    height: 12em;
+    object-fit: cover;
+    border-radius: 0.5em;
+    border: 1px solid #9D9EA2;
+    margin-left: 0;
+    margin-bottom: 0;
+    -webkit-box-shadow: inset 12px 12px 46px -31px rgba(0, 0, 0, 1);
+    -moz-box-shadow: inset 12px 12px 46px -31px rgba(0, 0, 0, 1);
+    box-shadow: inset 12px 12px 46px -31px rgba(0, 0, 0, 1);
+}
