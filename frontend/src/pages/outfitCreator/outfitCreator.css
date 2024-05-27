@@ -1,0 +1,30 @@
+#root {
+  display: flex;
+  flex-direction: row;
+}
+
+img.Clothes{
+  height: 9em !important;
+  width: 6em !important;
+  margin: 0.5em !important;
+}
+
+.controls{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.imageContainer{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.controls > span{
+  padding: 0.5em;
+  color: #666666;
+  font-size: 2em !important;
+}

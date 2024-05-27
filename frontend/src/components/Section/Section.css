@@ -1,0 +1,32 @@
+.section {
+    width: 100%;
+    padding: 1em;
+    overflow: auto;
+}
+
+.section-top{
+    display: flex;
+    justify-content: space-between;
+}
+
+.add-button{
+        margin-bottom: 0.1em;
+        padding: 0.3em 0.8em;
+        border-radius: 0.5em;
+        border: black;
+        background-color: #ddd;
+        font-size: 16px;
+        cursor: pointer;
+        color: #fff;
+}
+
+.underline {
+    height: 2px;
+    background-color: #d8d8d8;
+}
+
+.text {
+    color: #d8d8d8;
+    font-size: 18px;
+}
+

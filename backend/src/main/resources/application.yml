@@ -1,0 +1,21 @@
+spring:
+  jackson:
+    defaultPropertyInclusion: "non_null"
+  datasource:
+    driverClassName: 'org.postgresql.Driver'
+    url: jdbc:postgresql://localhost:5433/db
+    username: postgres
+    password: postgres
+  jpa:
+    showSql: 'true'
+    hibernate:
+      ddl-auto: 'update'
+    properties:
+      hibernate:
+        dialect: 'org.hibernate.dialect.PostgreSQLDialect'
+
+application:
+  security:
+    jwt:
+      secret-key: aedc736d5e91942706607c666fac3fd34001af0511af01288ddda0390c0e50c8
+      expiration: 10800000
