@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
+import java.awt.*;
 import java.util.Set;
 
 @Data
@@ -21,6 +22,7 @@ public class Clothes{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private String src;
+    private Color color;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

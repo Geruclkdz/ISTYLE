@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
+import lombok.ToString;
 
 @Data
 @Entity
@@ -15,17 +16,18 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
+@ToString(exclude = "user")
 public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     @OneToOne
     @JoinColumn(name = "user_id")
     @JsonBackReference
     private User user;
+
     private String name;
     private String surname;
     private String description;
 }
-
-
