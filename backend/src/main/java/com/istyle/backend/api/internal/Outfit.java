@@ -23,4 +23,8 @@ public class Outfit {
     private String name;
     @ManyToMany(mappedBy = "outfits")
     private Set<Clothes> clothes;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

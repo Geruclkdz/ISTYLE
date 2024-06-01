@@ -2,12 +2,8 @@ package com.istyle.backend.api.internal;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.Accessors;
-import lombok.ToString;
 
 @Data
 @Entity
@@ -17,6 +13,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Accessors(chain = true)
 @ToString(exclude = "user")
+@EqualsAndHashCode(exclude = "user")
 public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

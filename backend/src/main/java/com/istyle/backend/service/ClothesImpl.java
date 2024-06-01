@@ -22,6 +22,8 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+
+import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,6 +46,7 @@ public class ClothesImpl implements ClothesInterface {
     private final UserRepository userRepository;
     private final CategoriesRepository categoriesRepository;
     private final TypesRepository typesRepository;
+    private final ColorInterface colorInterface;
 
     @Override
     public List<ClothesDTO> getUsersClothes(int userId) {
@@ -56,7 +59,7 @@ public class ClothesImpl implements ClothesInterface {
 
     @Override
     public ClothesDTO getUsersClothesById(int id, int userId) {
-        return clothesMapper.map(clothesRepository.findById((int) id).orElseThrow());
+        return clothesMapper.map(clothesRepository.findById(id).orElseThrow());
     }
 
     @Override
@@ -77,26 +80,32 @@ public class ClothesImpl implements ClothesInterface {
             Type type = typesRepository.findById(clothesDTO.getType().getId()).orElseThrow();
             clothes.setType(type);
 
-            clothes = clothesRepository.save(clothes); // Save the entity and get the updated entity with generated id
-            String directoryPath = "images/" + userId;
+            clothes = clothesRepository.save(clothes);
+
+            String directoryPath = "backend/src/main/resources/static/images";
             Path path = Paths.get(directoryPath);
             if (!Files.exists(path)) {
                 Files.createDirectories(path);
             }
-            String filePath = directoryPath + "/" + clothes.getId() + ".jpg";
 
-            clothes.setSrc(filePath);
+            String relativeFilePath = "/images/" + userId + "_" + clothes.getId() + ".jpg";
+            String fullFilePath = directoryPath + "/" + userId + "_" + clothes.getId() + ".jpg";
 
+            clothes.setSrc(relativeFilePath);
             clothesRepository.save(clothes);
 
             byte[] imageBytes = eraseBackground(image);
+            Color color = colorInterface.determineMainColor(imageBytes);
+            clothes.setColor(color);
+            System.out.println(color.getRed() + " " + color.getGreen() + " " + color.getBlue());
 
-            Path imagePath = Paths.get(filePath);
+            Path imagePath = Paths.get(fullFilePath);
             Files.write(imagePath, imageBytes);
         } catch (Exception e) {
             throw new RuntimeException("Could not save clothes", e);
         }
     }
+
 
     private byte[] eraseBackground(MultipartFile image) throws IOException {
         RestTemplate restTemplate = new RestTemplate();

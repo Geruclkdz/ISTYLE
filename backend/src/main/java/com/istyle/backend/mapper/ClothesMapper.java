@@ -17,8 +17,8 @@ public class ClothesMapper {
                 .setSrc(clothes.getSrc())
                 .setUserId(clothes.getUser().getId())
                 .setType(typeMapper.map(clothes.getType()))
-                .setCategories(categoryMapper.map(clothes.getCategories()));
-
+                .setCategories(categoryMapper.map(clothes.getCategories()))
+                .setColor(clothes.getColor());
     }
 
     public Clothes map(ClothesDTO clothesDTO) {
@@ -26,7 +26,7 @@ public class ClothesMapper {
                 .setId(clothesDTO.getId())
                 .setSrc(clothesDTO.getSrc())
                 .setType(typeMapper.map(clothesDTO.getType()))
-                .setCategories(categoryMapper.map(clothesDTO.getCategories()));
-
+                .setCategories(categoryMapper.map(clothesDTO.getCategories()))
+                .setColor(clothesDTO.getColor());
     }
 }

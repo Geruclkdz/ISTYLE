@@ -10,4 +10,5 @@ public interface UserInterface {
     UserDTO getUserById(Integer id);
     UserDTO getUserByEmail(String email);
     UserInfo getUserInfoByEmail(String email);
+    Integer getUserIdFromAuthorizationHeader(String authorizationHeader) throws Exception;
 }

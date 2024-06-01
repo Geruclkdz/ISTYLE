@@ -26,6 +26,7 @@ public class UserController {
     public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(new StatusResponseDTO(200));
     }
+
 }
 
 

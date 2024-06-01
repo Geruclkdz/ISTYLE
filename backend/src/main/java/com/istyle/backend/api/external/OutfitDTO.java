@@ -1,6 +1,7 @@
 package com.istyle.backend.api.external;
 
 import com.istyle.backend.api.internal.Clothes;
+import com.istyle.backend.api.internal.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,5 +14,5 @@ import java.util.Set;
 @Accessors(chain = true)
 public class OutfitDTO {
     private int id;
-    Set<Clothes> clothes;
+    private Set<Clothes> clothes;
 }

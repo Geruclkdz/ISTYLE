@@ -23,14 +23,4 @@ axiosInstance.interceptors.response.use(response => response, error => {
     return Promise.reject(error);
 });
 
-
-export const getUserRole = () => {
-    const token = localStorage.getItem('token');
-    if (!token) return null;
-
-    const decoded = jwtDecode(token);
-    return decoded.role;
-};
-
-
 export default axiosInstance;

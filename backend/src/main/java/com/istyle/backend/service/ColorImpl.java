@@ -2,11 +2,11 @@ package com.istyle.backend.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,8 +18,10 @@ import java.util.Map;
 public class ColorImpl implements ColorInterface {
 
     @Override
-    public Color determineMainColor(MultipartFile image) throws IOException {
-        BufferedImage originalImage = ImageIO.read(image.getInputStream());
+    public Color determineMainColor(byte[] imageBytes) throws IOException {
+        ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes);
+        BufferedImage originalImage = ImageIO.read(bis);
+
         int width = originalImage.getWidth();
         int height = originalImage.getHeight();
 
@@ -27,7 +29,14 @@ public class ColorImpl implements ColorInterface {
 
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                Color pixelColor = new Color(originalImage.getRGB(x, y));
+                int rgb = originalImage.getRGB(x, y);
+                int alpha = (rgb >> 24) & 0xFF;
+
+                if (alpha == 0) {
+                    continue;
+                }
+
+                Color pixelColor = new Color(rgb, true);
                 colorCountMap.put(pixelColor, colorCountMap.getOrDefault(pixelColor, 0) + 1);
             }
         }
@@ -43,5 +52,4 @@ public class ColorImpl implements ColorInterface {
 
         return mainColor;
     }
-
 }

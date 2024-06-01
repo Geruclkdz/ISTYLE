@@ -34,7 +34,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 HttpMethod.GET,
                                 "/api/clothes/**",
-                                "/api/clothes"
+                                "/api/clothes",
+                                "/images/**"
                         )
                         .permitAll()
                         .anyRequest()
@@ -43,7 +44,6 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 }

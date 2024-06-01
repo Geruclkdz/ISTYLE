@@ -1,9 +1,9 @@
 import React from 'react';
-import './Category.css';
+import './Type.css';
 
-const Category = ({ text, children }) => {
+const Type = ({ text, children }) => {
     return (
-        <div className="category">
+        <div className="type">
             <div className="content">{text}</div>
             <div className="images">{children}</div>
         </div>
@@ -11,4 +11,4 @@ const Category = ({ text, children }) => {
     );
 };
 
-export default Category;
+export default Type;

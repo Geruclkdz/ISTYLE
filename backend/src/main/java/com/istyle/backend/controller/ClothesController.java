@@ -39,7 +39,7 @@ public class ClothesController {
     @GetMapping()
     public ResponseEntity<List<ClothesDTO>> getClothes(@RequestHeader("Authorization") String authorizationHeader) {
         try{
-            Integer userId = getUserIdFromAuthorizationHeader(authorizationHeader);
+            Integer userId = userInterface.getUserIdFromAuthorizationHeader(authorizationHeader);
             List<ClothesDTO> clothes = clothesInterface.getUsersClothes(userId);
             return ResponseEntity.ok(clothes);
         } catch (Exception e) {
@@ -50,7 +50,7 @@ public class ClothesController {
     @GetMapping("/{id}")
     public ResponseEntity<ClothesDTO> getClothesByID(@RequestHeader("Authorization") String authorizationHeader, @PathVariable Integer id) {
         try{
-            Integer userId = getUserIdFromAuthorizationHeader(authorizationHeader);
+            Integer userId = userInterface.getUserIdFromAuthorizationHeader(authorizationHeader);
             ClothesDTO clothes = clothesInterface.getUsersClothesById(id, userId);
             return ResponseEntity.ok(clothes);
         } catch (Exception e) {
@@ -76,7 +76,7 @@ public class ClothesController {
             @RequestParam("image") MultipartFile image) {
 
         try {
-            Integer userId = getUserIdFromAuthorizationHeader(authorizationHeader);
+            Integer userId = userInterface.getUserIdFromAuthorizationHeader(authorizationHeader);
 
             ObjectMapper objectMapper = new ObjectMapper();
             TypeDTO type = objectMapper.readValue(typeJson, TypeDTO.class);
@@ -95,17 +95,6 @@ public class ClothesController {
         }
     }
 
-
-    private Integer getUserIdFromAuthorizationHeader(String authorizationHeader) throws Exception {
-        String jwtToken = authorizationHeader.substring(7);
-        String userEmail = jwtInterface.extractEmail(jwtToken);
-        UserDTO user = userInterface.getUserByEmail(userEmail);
-        if (user != null) {
-            return user.getId();
-        } else {
-            throw new Exception("User not found for email: " + userEmail);
-        }
-    }
 
     @GetMapping("/types")
     public ResponseEntity<List<TypeDTO>> getTypes() {
