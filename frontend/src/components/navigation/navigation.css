@@ -57,3 +57,33 @@ li:last-child {
     cursor: pointer;
     font-size: 0.8em;
 }
+
+@media only screen and (max-width: 600px) {
+    nav {
+        width: 100%;
+        height: auto;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        z-index: 1000; /* Ensure it's on top of other content */
+    }
+
+    nav > img {
+        display: none;
+    }
+
+    ul {
+        flex-direction: row; /* Align list items horizontally */
+        justify-content: space-around; /* Evenly distribute items */
+
+    }
+
+    li:last-child {
+        display: none;
+    }
+
+    .material-symbols-sharp
+    {
+        font-size: 32px !important;
+    }
+}

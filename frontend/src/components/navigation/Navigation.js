@@ -2,12 +2,14 @@ import './navigation.css'
 import logo from '../../assets/LOGO.png'
 import {Link} from "react-router-dom";
 import {useNavigate} from "react-router-dom";
+import {useAuth} from "../../utils/AuthContext";
 
 function Navigation() {
 
+    const { logout } = useAuth();
     const navigate = useNavigate();
     const handleLogout = () => {
-        localStorage.removeItem('token');
+        logout();
         navigate('/login');
     };
 

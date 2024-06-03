@@ -19,15 +19,12 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-@ToString(exclude = {"userInfo", "favourites", "outfits"})
-@EqualsAndHashCode(exclude = {"userInfo", "favourites", "outfits"})
+@ToString(exclude = {"userInfo", "outfits"})
+@EqualsAndHashCode(exclude = {"userInfo", "outfits"})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
-    @OneToMany(mappedBy = "user")
-    private Set<Favourites> favourites;
 
     @OneToMany(mappedBy = "user")
     private Set<Outfit> outfits;

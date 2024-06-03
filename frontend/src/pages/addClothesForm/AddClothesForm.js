@@ -3,16 +3,17 @@ import Navigation from "../../components/navigation/Navigation";
 import Section from "../../components/Section/Section";
 import { useEffect, useState } from "react";
 import axios from "../../axiosConfig";
-import CategoryDropdown from "../../components/CategoryDropdown";
+import CategoryDropdown from "../../components/CategoryDropdown/CategoryDropdown";
+import { useNavigate } from "react-router-dom";
 
 const AddClothesForm = () => {
 
     const [clothes, setClothes] = useState({
         image: '',
         category: [],
-        type: {}, // Initialize type as an object
+        type: {},
     });
-
+    const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
     const [types, setTypes] = useState([]);
 
@@ -80,6 +81,7 @@ const AddClothesForm = () => {
                     'Content-Type': 'multipart/form-data',
                 }
             });
+            navigate('/wardrobe');
         } catch (error) {
             console.error('Error:', error);
         }
@@ -89,29 +91,20 @@ const AddClothesForm = () => {
         <>
             <Navigation />
             <Section text="ADD CLOTHES">
-                <form onSubmit={handleSubmit}>
-                    <label>
-                        Image:
+                <form onSubmit={handleSubmit} className="addClothes">
                         <input type="file" name="image" onChange={handleChange} />
-                    </label>
-                    <label>
-                        Category:
                         <CategoryDropdown
                             categories={categories}
                             selectedCategories={clothes.category}
                             onCategoryChange={handleCategoryChange}
                         />
-                    </label>
-                    <label>
-                        Type:
                         <select name="type" value={clothes.type.id || ''} onChange={handleChange}> {/* Add a fallback value */}
                             <option value="">Select a type</option>
                             {types.map(type => (
                                 <option key={type.id} value={type.id}>{type.name}</option>
                             ))}
                         </select>
-                    </label>
-                    <button type="submit">Add Clothes</button>
+                    <button type="submit" className="addButton">Add Clothes </button>
                 </form>
             </Section>
         </>

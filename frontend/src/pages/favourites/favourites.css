@@ -2,3 +2,9 @@
   display: flex;
   flex-direction: row;
 }
+
+.favourites .content {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px; /* Adjust the gap between items as needed */
+}

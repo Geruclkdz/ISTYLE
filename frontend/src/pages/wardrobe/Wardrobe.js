@@ -16,7 +16,7 @@ const Wardrobe = () => {
                 const clothesData = response.data;
 
                 const clothesByType = clothesData.reduce((acc, item) => {
-                    const typeName = item.type.name; // Adjust this line to get the type name
+                    const typeName = item.type.name;
                     if (!acc[typeName]) {
                         acc[typeName] = [];
                     }

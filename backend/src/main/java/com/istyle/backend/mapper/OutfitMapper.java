@@ -9,15 +9,16 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OutfitMapper {
 
+    private final ClothesMapper clothesMapper;
     public OutfitDTO map(Outfit outfit) {
         return new OutfitDTO()
                 .setId(outfit.getId())
-                .setClothes(outfit.getClothes());
+                .setClothes(clothesMapper.mapToDTOs(outfit.getClothes()));
     }
 
     public Outfit map(OutfitDTO outfitDTO) {
         return new Outfit()
                 .setId(outfitDTO.getId())
-                .setClothes(outfitDTO.getClothes());
+                .setClothes(clothesMapper.mapFromDTOs(outfitDTO.getClothes()));
     }
 }

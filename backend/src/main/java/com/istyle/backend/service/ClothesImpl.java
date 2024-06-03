@@ -22,8 +22,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-
-import java.awt.*;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -92,12 +90,11 @@ public class ClothesImpl implements ClothesInterface {
             String fullFilePath = directoryPath + "/" + userId + "_" + clothes.getId() + ".jpg";
 
             clothes.setSrc(relativeFilePath);
-            clothesRepository.save(clothes);
 
             byte[] imageBytes = eraseBackground(image);
-            Color color = colorInterface.determineMainColor(imageBytes);
+            String color = colorInterface.determineMainColor(imageBytes);
             clothes.setColor(color);
-            System.out.println(color.getRed() + " " + color.getGreen() + " " + color.getBlue());
+            clothesRepository.save(clothes);
 
             Path imagePath = Paths.get(fullFilePath);
             Files.write(imagePath, imageBytes);

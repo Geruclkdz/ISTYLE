@@ -18,5 +18,5 @@ public class ClothesDTO {
     private TypeDTO type;
     private List<CategoryDTO> categories;
     private int userId;
-    private Color color;
+    private String color;
 }

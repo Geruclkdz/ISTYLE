@@ -6,7 +6,6 @@ import com.istyle.backend.api.internal.UserInfo;
 import com.istyle.backend.mapper.UserMapper;
 import com.istyle.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -18,7 +17,6 @@ public class UserImpl implements UserInterface {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final JwtInterface jwtInterface;
-    private final UserInterface userInterface;
 
     @Override
     public UserDTO getUserById(Integer id) {
@@ -40,7 +38,7 @@ public class UserImpl implements UserInterface {
     public Integer getUserIdFromAuthorizationHeader(String authorizationHeader) throws Exception {
         String jwtToken = authorizationHeader.substring(7);
         String userEmail = jwtInterface.extractEmail(jwtToken);
-        UserDTO user = userInterface.getUserByEmail(userEmail);
+        UserDTO user = getUserByEmail(userEmail);
         if (user != null) {
             return user.getId();
         } else {

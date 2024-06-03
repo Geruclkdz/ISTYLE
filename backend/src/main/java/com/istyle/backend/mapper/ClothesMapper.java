@@ -5,6 +5,10 @@ import com.istyle.backend.api.internal.Clothes;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Component
 @RequiredArgsConstructor
 public class ClothesMapper {
@@ -28,5 +32,17 @@ public class ClothesMapper {
                 .setType(typeMapper.map(clothesDTO.getType()))
                 .setCategories(categoryMapper.map(clothesDTO.getCategories()))
                 .setColor(clothesDTO.getColor());
+    }
+
+    public List<Clothes> mapFromDTOs(List<ClothesDTO> clothesDTO) {
+        return clothesDTO.stream()
+                .map(this::map)
+                .toList();
+    }
+
+    public List<ClothesDTO> mapToDTOs(List<Clothes> clothes) {
+        return clothes.stream()
+                .map(this::map)
+                .toList();
     }
 }

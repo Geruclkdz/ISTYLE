@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import './CategoryDropdown.css'; // Ensure to create and import appropriate CSS for styling
+import './CategoryDropdown.css';
 
 const CategoryDropdown = ({ categories, selectedCategories, onCategoryChange }) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +31,7 @@ const CategoryDropdown = ({ categories, selectedCategories, onCategoryChange }) 
                 <div className="dropdown-menu">
                     {categories.map(category => (
                         <div key={category.id} className="dropdown-item">
-                            <label>
+                            <label className="category_check">
                                 <input
                                     type="checkbox"
                                     value={category.id}

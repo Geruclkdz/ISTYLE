@@ -30,3 +30,11 @@
     font-size: 18px;
 }
 
+.outfitCreator > div.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+}
+

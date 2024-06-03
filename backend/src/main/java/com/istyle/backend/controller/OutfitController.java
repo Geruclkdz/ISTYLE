@@ -1,7 +1,8 @@
 package com.istyle.backend.controller;
 
-import com.istyle.backend.api.external.ClothesDTO;
-import com.istyle.backend.api.external.OutfitDTO;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.istyle.backend.api.external.*;
 import com.istyle.backend.service.OutfitInterface;
 import com.istyle.backend.service.UserInterface;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +23,22 @@ public class OutfitController {
     private final UserInterface userInterface;
 
     @GetMapping
-    public ResponseEntity<Set<OutfitDTO>> getOutfits(@RequestHeader("Authorization") String authorizationHeader) {
+    public ResponseEntity<List<OutfitDTO>> getOutfits(@RequestHeader("Authorization") String authorizationHeader) {
         try{
             Integer userId = userInterface.getUserIdFromAuthorizationHeader(authorizationHeader);
-            Set<OutfitDTO> outfits = outfitInterface.getUsersOutfits(userId);
+            List<OutfitDTO> outfits = outfitInterface.getUsersOutfits(userId);
             return ResponseEntity.ok(outfits);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+    }
+
+    @GetMapping("/create")
+    public ResponseEntity<Set<ClothesDTO>> createOutfit(@RequestHeader("Authorization") String authorizationHeader) {
+        try{
+            Integer userId = userInterface.getUserIdFromAuthorizationHeader(authorizationHeader);
+            Set<ClothesDTO> clothes = outfitInterface.createOutfit(userId);
+            return ResponseEntity.ok(clothes);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
         }
@@ -42,8 +54,16 @@ public class OutfitController {
         return ResponseEntity.ok(outfitInterface.deleteOutfit(id));
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<Object> addOutfit(@RequestBody OutfitDTO outfitDTO) {
-        return ResponseEntity.ok(outfitInterface.addOutfit(outfitDTO));
+    @PostMapping("/save")
+    public ResponseEntity<Object> addOutfit(@RequestHeader("Authorization") String authorizationHeader, @RequestBody OutfitDTO outfitDTO) {
+        try {
+            Integer userId = userInterface.getUserIdFromAuthorizationHeader(authorizationHeader);
+
+            outfitInterface.addOutfit(outfitDTO, userId);
+
+            return ResponseEntity.status(HttpStatus.OK).body(new StatusResponseDTO(200));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
     }
 }

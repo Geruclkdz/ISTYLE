@@ -4,5 +4,5 @@ import java.awt.*;
 import java.io.IOException;
 
 public interface ColorInterface {
-    Color determineMainColor(byte[] imageBytes) throws IOException;
+    String determineMainColor(byte[] imageBytes) throws IOException;
 }

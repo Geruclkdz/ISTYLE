@@ -28,7 +28,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class ClothesController {
 
     private final ClothesInterface clothesInterface;
-    private final JwtInterface jwtInterface;
     private final UserInterface userInterface;
     private final TypesRepository typesRepository;
     private final TypeMapper TypeMapper;

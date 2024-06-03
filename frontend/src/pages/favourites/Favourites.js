@@ -1,16 +1,36 @@
 import './favourites.css';
 import Navigation from "../../components/navigation/Navigation";
 import Section from "../../components/Section/Section";
-import Image from "../../components/Image/Image";
-import image5 from '../../assets/5.png';
-
+import Outfit from "../../components/Outfit/Outfit";
+import { useEffect, useState } from "react";
+import axios from "../../axiosConfig";
 
 const Favourites = () => {
+    const [outfits, setOutfits] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get('/api/outfits');
+                const outfitsData = response.data;
+
+                setOutfits(outfitsData);
+            } catch (error) {
+                console.error('Error fetching outfits:', error);
+            }
+        };
+
+        fetchData();
+    }, []);
+
     return (
         <>
-            <Navigation/>
-            <Section text="FAVOURITES OUTFITS">
-                    <Image>{image5}</Image>
+            <Navigation />
+            <Section text="FAVOURITES OUTFITS" className="favourites">
+
+                {outfits.map((outfit, index) => (
+                    <Outfit key={index} outfit={outfit} />
+                ))}
             </Section>
         </>
     )

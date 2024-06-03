@@ -18,38 +18,39 @@ import java.util.Map;
 public class ColorImpl implements ColorInterface {
 
     @Override
-    public Color determineMainColor(byte[] imageBytes) throws IOException {
-        ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes);
-        BufferedImage originalImage = ImageIO.read(bis);
+    public String determineMainColor(byte[] imageBytes) throws IOException {
+        try (ByteArrayInputStream bis = new ByteArrayInputStream(imageBytes)) {
+            BufferedImage originalImage = ImageIO.read(bis);
 
-        int width = originalImage.getWidth();
-        int height = originalImage.getHeight();
+            if (originalImage == null) {
+                throw new IOException("Failed to read image");
+            }
 
-        Map<Color, Integer> colorCountMap = new HashMap<>();
+            int width = originalImage.getWidth();
+            int height = originalImage.getHeight();
 
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                int rgb = originalImage.getRGB(x, y);
-                int alpha = (rgb >> 24) & 0xFF;
+            Map<Color, Integer> colorCountMap = new HashMap<>();
 
-                if (alpha == 0) {
-                    continue;
+            for (int y = 0; y < height; y++) {
+                for (int x = 0; x < width; x++) {
+                    int rgb = originalImage.getRGB(x, y);
+                    Color pixelColor = new Color(rgb, true);
+
+                    if (pixelColor.getAlpha() == 0) {
+                        continue;
+                    }
+
+                    colorCountMap.put(pixelColor, colorCountMap.getOrDefault(pixelColor, 0) + 1);
                 }
-
-                Color pixelColor = new Color(rgb, true);
-                colorCountMap.put(pixelColor, colorCountMap.getOrDefault(pixelColor, 0) + 1);
             }
-        }
 
-        Color mainColor = null;
-        int maxCount = 0;
-        for (Map.Entry<Color, Integer> entry : colorCountMap.entrySet()) {
-            if (entry.getValue() > maxCount) {
-                maxCount = entry.getValue();
-                mainColor = entry.getKey();
-            }
-        }
+            Color mainColor = colorCountMap.entrySet()
+                    .stream()
+                    .max(Map.Entry.comparingByValue())
+                    .orElseThrow(() -> new RuntimeException("Could not determine the main color"))
+                    .getKey();
 
-        return mainColor;
+            return String.format("#%02x%02x%02x", mainColor.getRed(), mainColor.getGreen(), mainColor.getBlue());
+        }
     }
 }

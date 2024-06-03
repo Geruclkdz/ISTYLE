@@ -28,3 +28,11 @@ img.Clothes{
   color: #666666;
   font-size: 2em !important;
 }
+
+@media only screen and (max-width: 600px) {
+  .outfitCreator > div.content >div >div > img.Clothes{
+    height: 13em !important;
+    width: 8em !important;
+    margin: 0.5em !important;
+  }
+}
