@@ -1,7 +1,5 @@
 package com.istyle.backend.controller;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.istyle.backend.api.external.*;
 import com.istyle.backend.service.OutfitInterface;
 import com.istyle.backend.service.UserInterface;
@@ -11,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 
 @RestController
@@ -24,7 +22,7 @@ public class OutfitController {
 
     @GetMapping
     public ResponseEntity<List<OutfitDTO>> getOutfits(@RequestHeader("Authorization") String authorizationHeader) {
-        try{
+        try {
             Integer userId = userInterface.getUserIdFromAuthorizationHeader(authorizationHeader);
             List<OutfitDTO> outfits = outfitInterface.getUsersOutfits(userId);
             return ResponseEntity.ok(outfits);
@@ -34,15 +32,20 @@ public class OutfitController {
     }
 
     @GetMapping("/create")
-    public ResponseEntity<Set<ClothesDTO>> createOutfit(@RequestHeader("Authorization") String authorizationHeader) {
-        try{
+    public ResponseEntity<Map<String, Object>> createOutfit(@RequestHeader("Authorization") String authorizationHeader, @RequestParam("lat") Double latitude, @RequestParam("lon") Double longitude, @RequestParam(value = "categories", required = false) List<Integer> categories, @RequestParam(value = "useWeather", defaultValue = "true") boolean useWeatherConditions) {
+        try {
             Integer userId = userInterface.getUserIdFromAuthorizationHeader(authorizationHeader);
-            Set<ClothesDTO> clothes = outfitInterface.createOutfit(userId);
+
+            String locationQuery = latitude + "," + longitude;
+
+            Map<String, Object> clothes = outfitInterface.createOutfit(userId, locationQuery, categories, useWeatherConditions);
+
             return ResponseEntity.ok(clothes);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<OutfitDTO> getOutfitByID(@PathVariable Integer id) {

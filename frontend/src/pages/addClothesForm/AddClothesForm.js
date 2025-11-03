@@ -1,68 +1,96 @@
 import './AddClothesForm.css';
-import Navigation from "../../components/navigation/Navigation";
+import Navigation from "../../components/Navigation/Navigation";
 import Section from "../../components/Section/Section";
 import { useEffect, useState } from "react";
 import axios from "../../axiosConfig";
-import CategoryDropdown from "../../components/CategoryDropdown/CategoryDropdown";
+import DropdownList from "../../components/DropdownList/DropdownList";
 import { useNavigate } from "react-router-dom";
 
 const AddClothesForm = () => {
-
     const [clothes, setClothes] = useState({
         image: '',
         category: [],
         type: {},
+        isRainResistant: false,
+        isWindResistant: false
     });
+
     const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
     const [types, setTypes] = useState([]);
 
     useEffect(() => {
-        const fetchCategoriesAndTypes = async () => {
+        const fetchData = async () => {
             try {
-                const categoriesResponse = await axios.get('/api/clothes/categories');
-                const typesResponse = await axios.get('/api/clothes/types');
+                const [categoriesResponse, typesResponse] = await Promise.all([
+                    axios.get('/api/clothes/categories'),
+                    axios.get('/api/clothes/types'),
+                ]);
                 setCategories(categoriesResponse.data);
                 setTypes(typesResponse.data);
             } catch (error) {
-                console.error('Error:', error);
+                console.error('Error fetching categories and types:', error);
             }
         };
-        fetchCategoriesAndTypes();
+        fetchData();
     }, []);
 
     const handleChange = (event) => {
-        if (event.target.name === 'image') {
-            setClothes({
-                ...clothes,
-                [event.target.name]: event.target.files[0],
-            });
-        } else if (event.target.name === 'type') {
-            const selectedOption = types.find(option => option.id === parseInt(event.target.value, 10)); // Parse value to integer
-            setClothes({
-                ...clothes,
-                [event.target.name]: selectedOption,
-            });
+        const { name, type, value, checked, files } = event.target;
+
+        if (type === 'file') {
+            setClothes(prevState => ({
+                ...prevState,
+                image: files[0]
+            }));
+        } else if (type === 'checkbox') {
+            setClothes(prevState => ({
+                ...prevState,
+                [name]: checked
+            }));
+        } else if (name === 'type') {
+            const selectedType = types.find(option => option.id === parseInt(value, 10));
+            setClothes(prevState => ({
+                ...prevState,
+                type: selectedType || {}
+            }));
         } else {
-            setClothes({
-                ...clothes,
-                [event.target.name]: event.target.value,
-            });
+            setClothes(prevState => ({
+                ...prevState,
+                [name]: value
+            }));
         }
     };
 
-    const handleCategoryChange = (event) => {
-        const selectedCategory = categories.find(category => category.id === parseInt(event.target.value, 10)); // Parse value to integer
-        if (event.target.checked) {
-            setClothes(prevState => ({
-                ...prevState,
-                category: [...prevState.category, selectedCategory]
-            }));
-        } else {
-            setClothes(prevState => ({
-                ...prevState,
-                category: prevState.category.filter(category => category.id !== selectedCategory.id)
-            }));
+    const handleCategoryChange = (selectedCategories) => {
+        setClothes(prevState => ({
+            ...prevState,
+            category: selectedCategories,
+        }));
+    };
+
+    const handleTypeChange = (selectedTypes) => {
+        setClothes(prevState => ({
+            ...prevState,
+            type: selectedTypes[0] || {}, // Single selection for type
+        }));
+    };
+
+    const handleAddCategory = async (categoryName) => {
+        try {
+            const response = await axios.post('/api/clothes/categories', { name: categoryName });
+            const newCategory = response.data;
+
+            if (!newCategory.id || !newCategory.name) {
+                console.error('New category missing required properties:', newCategory);
+                return;
+            }
+
+            setCategories((prevCategories) => [...prevCategories, newCategory]);
+
+            return newCategory;
+        } catch (error) {
+            console.error('Error adding category:', error);
         }
     };
 
@@ -73,6 +101,8 @@ const AddClothesForm = () => {
         formData.append('image', clothes.image);
         formData.append('type', JSON.stringify(clothes.type));
         formData.append('category', JSON.stringify(clothes.category));
+        formData.append('isRainResistant', clothes.isRainResistant);
+        formData.append('isWindResistant', clothes.isWindResistant);
 
         try {
             await axios.post('/api/clothes', formData, {
@@ -83,28 +113,61 @@ const AddClothesForm = () => {
             });
             navigate('/wardrobe');
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error submitting form:', error);
         }
     };
+
+    // Determine if checkboxes should be disabled
+    const disableResistantCheckboxes = ['Tops', 'Bottoms'].includes(clothes.type.name);
 
     return (
         <>
             <Navigation />
             <Section text="ADD CLOTHES">
                 <form onSubmit={handleSubmit} className="addClothes">
+                    <label>
+                        Upload Image:
                         <input type="file" name="image" onChange={handleChange} />
-                        <CategoryDropdown
-                            categories={categories}
-                            selectedCategories={clothes.category}
-                            onCategoryChange={handleCategoryChange}
-                        />
-                        <select name="type" value={clothes.type.id || ''} onChange={handleChange}> {/* Add a fallback value */}
-                            <option value="">Select a type</option>
-                            {types.map(type => (
-                                <option key={type.id} value={type.id}>{type.name}</option>
-                            ))}
-                        </select>
-                    <button type="submit" className="addButton">Add Clothes </button>
+                    </label>
+                    <DropdownList
+                        items={categories}
+                        selectedItems={clothes.category}
+                        onSelectionChange={handleCategoryChange}
+                        onAddItem={handleAddCategory}
+                        allowMultiple={true}
+                        placeholder="Select Categories"
+                    />
+                    <DropdownList
+                        items={types}
+                        selectedItems={[clothes.type]}
+                        onSelectionChange={handleTypeChange}
+                        onAddItem={null}
+                        allowMultiple={false}
+                        placeholder="Select Type"
+                    />
+                    <div className="checkboxes">
+                        <label>
+                            <input
+                                type="checkbox"
+                                name="isRainResistant"
+                                checked={clothes.isRainResistant}
+                                onChange={handleChange}
+                                disabled={disableResistantCheckboxes}
+                            />
+                            Rain Resistant
+                        </label>
+                        <label>
+                            <input
+                                type="checkbox"
+                                name="isWindResistant"
+                                checked={clothes.isWindResistant}
+                                onChange={handleChange}
+                                disabled={disableResistantCheckboxes}
+                            />
+                            Wind Resistant
+                        </label>
+                    </div>
+                    <button type="submit" className="addButton">Add Clothes</button>
                 </form>
             </Section>
         </>

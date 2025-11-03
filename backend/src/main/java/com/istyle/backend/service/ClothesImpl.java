@@ -6,6 +6,7 @@ import com.istyle.backend.api.internal.Category;
 import com.istyle.backend.api.internal.Clothes;
 import com.istyle.backend.api.internal.Type;
 import com.istyle.backend.api.internal.User;
+import com.istyle.backend.mapper.CategoryMapper;
 import com.istyle.backend.mapper.ClothesMapper;
 import com.istyle.backend.repository.ClothesRepository;
 import com.istyle.backend.repository.TypesRepository;
@@ -37,6 +38,7 @@ import java.util.Set;
 
 public class ClothesImpl implements ClothesInterface {
 
+    private final CategoryMapper categoryMapper;
     @Value("${application.remove.bg.api.key}")
     private String removeBgApiKey;
     private final ClothesRepository clothesRepository;
@@ -48,7 +50,6 @@ public class ClothesImpl implements ClothesInterface {
 
     @Override
     public List<ClothesDTO> getUsersClothes(int userId) {
-
         return clothesRepository.findByUserId(userId)
                 .stream()
                 .map(clothesMapper::map)
@@ -80,7 +81,7 @@ public class ClothesImpl implements ClothesInterface {
 
             clothes = clothesRepository.save(clothes);
 
-            String directoryPath = "backend/src/main/resources/static/images";
+            String directoryPath = "./uploads/images";
             Path path = Paths.get(directoryPath);
             if (!Files.exists(path)) {
                 Files.createDirectories(path);
@@ -136,6 +137,14 @@ public class ClothesImpl implements ClothesInterface {
         }
     }
 
+    @Override
+    public CategoryDTO addCategory(CategoryDTO categoryDTO, int userId) {
+        Category category = new Category();
+        category.setName(categoryDTO.getName());
+        category.setUser(userRepository.findById(userId).orElseThrow());
+        Category savedCategory = categoriesRepository.save(category);
+        return categoryMapper.map(savedCategory);
+    }
 
 
     @Override

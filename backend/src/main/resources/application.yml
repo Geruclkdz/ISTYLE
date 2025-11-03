@@ -21,7 +21,9 @@ spring:
     static-path-pattern: /images/**
   web:
     resources:
-      static-locations: file:src/main/resources/static/
+      static-locations:
+        - file:./uploads/images/
+        - classpath:/static/images/
 
 
 application:
@@ -33,3 +35,8 @@ application:
     bg:
       api:
         key: Xt5m4A3HDsbguv5aK5PqdQDj
+  weather:
+    api:
+      key: 5c80066134474ba18a5173110240512
+      url: https://api.weatherapi.com/v1/current.json
+

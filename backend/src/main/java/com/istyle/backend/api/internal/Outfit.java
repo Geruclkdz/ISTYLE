@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
 import java.util.List;
-import java.util.Set;
 
 @Data
 @Entity
@@ -21,15 +20,19 @@ public class Outfit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     @ManyToMany(cascade = {CascadeType.ALL})
     @JoinTable(
             name = "outfit_clothes",
-            joinColumns = { @JoinColumn(name = "outfit_id")
+            joinColumns = { @JoinColumn(name = "id_outfit")
             },
-            inverseJoinColumns = { @JoinColumn(name = "clothes_id")})
-            List<Clothes> clothes;
+            inverseJoinColumns = { @JoinColumn(name = "id_clothes")})
+    private List<Clothes> clothes;
+
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "id_user")
     private User user;
 
+    @OneToMany(mappedBy = "outfit", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts;
 }

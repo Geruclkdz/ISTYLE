@@ -19,4 +19,6 @@ public class ClothesDTO {
     private List<CategoryDTO> categories;
     private int userId;
     private String color;
+    private boolean isRainResistant;
+    private boolean isWindResistant;
 }

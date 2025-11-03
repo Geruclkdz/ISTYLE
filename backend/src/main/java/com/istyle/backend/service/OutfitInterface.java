@@ -5,6 +5,7 @@ import com.istyle.backend.api.external.OutfitDTO;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public interface OutfitInterface {
@@ -12,5 +13,5 @@ public interface OutfitInterface {
     OutfitDTO getOutfitById(Integer id);
     ResponseEntity<Object> deleteOutfit(Integer id);
     void addOutfit(OutfitDTO outfitDTO, int userId);
-    Set<ClothesDTO> createOutfit(Integer userId);
+    Map<String, Object> createOutfit(Integer userId, String location, List<Integer> categories, boolean useWeatherConditions);
 }

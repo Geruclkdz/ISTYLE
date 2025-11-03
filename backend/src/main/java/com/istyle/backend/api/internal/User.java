@@ -15,16 +15,18 @@ import java.util.Set;
 
 @Data
 @Entity
+@Builder
 @Table(name="users")
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-@ToString(exclude = {"userInfo", "outfits"})
-@EqualsAndHashCode(exclude = {"userInfo", "outfits"})
+@ToString(exclude = {"userInfo", "outfits", "categories"})
+@EqualsAndHashCode(exclude = {"userInfo", "outfits", "categories"})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    private String username;
 
     @OneToMany(mappedBy = "user")
     private Set<Outfit> outfits;
@@ -36,6 +38,10 @@ public class User implements UserDetails {
     private String email;
     private String password;
     private String role;
+    @OneToMany(mappedBy = "user")
+    private Set<Category> categories;
+    @OneToMany(mappedBy = "follower", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Follow> following;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

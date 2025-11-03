@@ -1,10 +1,11 @@
-#root {
+.favourites-grid{
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 16px;
 }
 
-.favourites .content {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px; /* Adjust the gap between items as needed */
+.outfitContainer{
+  width: 220px;
+  height: 220px;
 }
+

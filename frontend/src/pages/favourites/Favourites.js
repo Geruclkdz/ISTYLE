@@ -1,8 +1,8 @@
 import './favourites.css';
-import Navigation from "../../components/navigation/Navigation";
+import Navigation from "../../components/Navigation/Navigation";
 import Section from "../../components/Section/Section";
 import Outfit from "../../components/Outfit/Outfit";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import axios from "../../axiosConfig";
 
 const Favourites = () => {
@@ -25,11 +25,11 @@ const Favourites = () => {
 
     return (
         <>
-            <Navigation />
+            <Navigation/>
             <Section text="FAVOURITES OUTFITS" className="favourites">
 
                 {outfits.map((outfit, index) => (
-                    <Outfit key={index} outfit={outfit} />
+                    <Outfit key={index} outfit={outfit}/>
                 ))}
             </Section>
         </>

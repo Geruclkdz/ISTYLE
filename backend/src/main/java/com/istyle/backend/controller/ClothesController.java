@@ -59,13 +59,38 @@ public class ClothesController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Object> deleteClothes(@PathVariable Integer id) {
-        return ResponseEntity.status(HttpStatus.OK).body(new StatusResponseDTO(200));
+        try {
+            clothesInterface.deleteClothes(id);
+            return ResponseEntity.status(HttpStatus.OK).body(new StatusResponseDTO(200));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StatusResponseDTO(500));
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Object> updateClothes(@PathVariable Integer id, @RequestBody ClothesDTO clothesDTO) {
-        return ResponseEntity.status(HttpStatus.OK).body(new StatusResponseDTO(200));
+    public ResponseEntity<Object> updateClothesCategories(
+            @PathVariable Integer id,
+            @RequestHeader("Authorization") String authorizationHeader,
+            @RequestBody List<CategoryDTO> categories) {
+
+        try {
+            Integer userId = userInterface.getUserIdFromAuthorizationHeader(authorizationHeader);
+
+            ClothesDTO clothesDTO = clothesInterface.getUsersClothesById(id, userId);
+            if (clothesDTO == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new StatusResponseDTO(404));
+            }
+            System.out.println("Categories received: " + categories);
+
+            clothesDTO.setCategories(categories);
+            clothesInterface.updateClothes(userId, clothesDTO);
+
+            return ResponseEntity.status(HttpStatus.OK).body(new StatusResponseDTO(200));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new StatusResponseDTO(500));
+        }
     }
+
 
     @PostMapping
     public ResponseEntity<Object> addClothes(
@@ -105,12 +130,29 @@ public class ClothesController {
     }
 
     @GetMapping("/categories")
-    public ResponseEntity<List<CategoryDTO>> getCategories() {
-        List<CategoryDTO> categories = categoriesRepository.findAll()
-                .stream()
-                .map(categoryMapper::map)
-                .toList();
-        return ResponseEntity.ok(categories);
+    public ResponseEntity<List<CategoryDTO>> getCategories(@RequestHeader("Authorization") String authorizationHeader) {
+        try {
+            Integer userId = userInterface.getUserIdFromAuthorizationHeader(authorizationHeader);
+            List<CategoryDTO> categories = categoriesRepository.findCategoriesByUserId(userId)
+                    .stream()
+                    .map(categoryMapper::map)
+                    .toList();
+            return ResponseEntity.ok(categories);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
     }
+
+    @PostMapping("/categories")
+    public ResponseEntity<Object> addCategory(@RequestHeader("Authorization") String authorizationHeader, @RequestBody CategoryDTO categoryDTO) {
+        try {
+            Integer userId = userInterface.getUserIdFromAuthorizationHeader(authorizationHeader);
+            CategoryDTO savedCategory = clothesInterface.addCategory(categoryDTO, userId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+    }
+
 
 }

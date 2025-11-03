@@ -1,5 +1,6 @@
 package com.istyle.backend.service;
 
+import com.istyle.backend.api.external.CategoryDTO;
 import com.istyle.backend.api.external.ClothesDTO;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,4 +12,5 @@ public interface ClothesInterface {
     List<ClothesDTO> getUsersClothes(int userId);
     ClothesDTO getUsersClothesById(int id, int userId);
     void addClothes(ClothesDTO clothesDTO, int userId, MultipartFile image);
+    CategoryDTO addCategory(CategoryDTO categoryDTO, int userId);
 }

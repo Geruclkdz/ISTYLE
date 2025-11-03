@@ -7,25 +7,25 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.util.Set;
-
 @Data
 @Entity
 @Builder
-@Table(name="category")
+@Table(name = "star", uniqueConstraints = {@UniqueConstraint(columnNames = {"id_post", "id_user"})})
 @NoArgsConstructor
 @AllArgsConstructor
 @Accessors(chain = true)
-public class Category {
+public class Star {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String name;
-    @ManyToMany(mappedBy = "categories", fetch=FetchType.EAGER)
-    private Set<Clothes> clothes;
+
     @ManyToOne
-    @JoinColumn(name = "id_user")
+    @JoinColumn(name = "id_post", nullable = false)
+    private Post post;
+
+    @ManyToOne
+    @JoinColumn(name = "id_user", nullable = false)
     private User user;
+
 }
-
-

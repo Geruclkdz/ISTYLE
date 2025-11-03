@@ -20,11 +20,12 @@ public class UserInfo {
     private int id;
 
     @OneToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "id_user", referencedColumnName = "id")
     @JsonBackReference
     private User user;
 
     private String name;
     private String surname;
     private String description;
+    private String user_photo;
 }

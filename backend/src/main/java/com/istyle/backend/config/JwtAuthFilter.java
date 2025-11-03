@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -31,23 +32,27 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             @NonNull HttpServletResponse response,
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-        if (request.getServletPath().contains("/api/auth/login") || request.getServletPath().contains("/api/auth/register")) {
+        String path = request.getServletPath();
+
+        // 1) Bypass public endpoints completely
+        if (path.startsWith("/images/")
+                || path.equals("/api/auth/login")
+                || path.equals("/api/auth/register")
+                || path.equals("/error")) {
             filterChain.doFilter(request, response);
             return;
         }
 
         final String authHeader = request.getHeader("Authorization");
-        final String jwtToken;
-        final String userEmail;
-
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            // No JWT present → continue unauthenticated
             filterChain.doFilter(request, response);
             return;
         }
 
-        jwtToken = authHeader.substring(7);
+        final String jwtToken = authHeader.substring(7);
         try {
-            userEmail = jwtInterface.extractEmail(jwtToken);
+            final String userEmail = jwtInterface.extractEmail(jwtToken);
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails user = this.userDetailsService.loadUserByUsername(userEmail);
@@ -58,26 +63,32 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                             null,
                             user.getAuthorities()
                     );
-
-                    authToken.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request)
-                    );
-
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
-
-                filterChain.doFilter(request, response);
             }
-        } catch  (ExpiredJwtException e) {
+
+            // Always continue the chain, regardless of whether auth was set
+            filterChain.doFilter(request, response);
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            // Keep your existing explicit 401 behavior for expired tokens
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
             String errorJson = "{\"error\": \"Unauthorized\", \"message\": \"JWT Token expired.\"}";
-
             response.setContentType("application/json");
             response.setCharacterEncoding("UTF-8");
             response.getWriter().write(errorJson);
+        } catch (io.jsonwebtoken.JwtException e) {
+            // Any other JWT parsing/validation exception → treat as unauthenticated and continue
+            // Option A (relaxed): continue unauthenticated
+            // filterChain.doFilter(request, response);
+            // return;
 
-            return;
+            // Option B (strict, similar to expired): send 401
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            String errorJson = "{\"error\": \"Unauthorized\", \"message\": \"Invalid JWT token.\"}";
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
+            response.getWriter().write(errorJson);
         }
     }
 

@@ -29,8 +29,12 @@ public class AuthImpl implements AuthInterface {
     @Transactional
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("User already exists!");
+            throw new RuntimeException("User with this email already exists!");
         }
+        else if(userRepository.existsByUsername(request.getUsername())){
+            throw new RuntimeException("Username already exists!");
+        }
+
         UserInfo userInfo = new UserInfo();
         userInfo.setName(request.getName());
         userInfo.setSurname(request.getSurname());
@@ -39,6 +43,7 @@ public class AuthImpl implements AuthInterface {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole("USER");
         user.setUserInfo(userInfo);
+        user.setUsername(request.getUsername());
         userInfo.setUser(user);
         userRepository.save(user);
 
