@@ -25,18 +25,33 @@ const Profile = () => {
             headers: {Authorization: `Bearer ${token}`},
         });
         const data = response.data || {};
-        // Normalize photo field: backend might send `user_photo`; UI expects `photo`
         return {...data, photo: data.photo || data.user_photo};
     };
 
-    // Utility function to fetch feed
     const fetchFeed = async (userId = null) => {
         const token = localStorage.getItem("token");
         const endpoint = userId ? `/api/social/feed?userId=${userId}` : "/api/social/feed";
         const response = await axios.get(endpoint, {
             headers: {Authorization: `Bearer ${token}`},
         });
-        return response.data;
+        const posts = response.data || [];
+
+        // fetch comments for each post in parallel and attach to post.comments
+        const postsWithComments = await Promise.all(posts.map(async (post) => {
+            try {
+                const commentsResponse = await axios.get(`/api/social/post/${post.id}/comments`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                // backend returns list of CommentDTO
+                post.comments = commentsResponse.data || [];
+            } catch (err) {
+                // if comments fetch fails, attach empty array to avoid crashes
+                post.comments = [];
+            }
+            return post;
+        }));
+
+        return postsWithComments;
     };
 
     const checkFollowStatus = async (viewingUserId) => {
@@ -46,7 +61,6 @@ const Profile = () => {
                 headers: {Authorization: `Bearer ${token}`},
             });
 
-            // Check if viewingUserId is in the list of followed users
             const isFollowed = response.data.some((user) => user.id === viewingUserId);
             setProfile((prev) => ({...prev, isFollowed}));
         } catch (err) {
@@ -75,7 +89,6 @@ const Profile = () => {
         }
     };
 
-    // Fetch data when viewingUserId changes
     useEffect(() => {
         const loadData = async () => {
             try {
@@ -147,7 +160,6 @@ const Profile = () => {
                 }
             );
 
-            // Refresh profile data after a successful update
             const updatedProfile = await fetchProfile();
             setProfile(updatedProfile);
             setError("");
@@ -185,10 +197,44 @@ const Profile = () => {
                 headers: {Authorization: `Bearer ${token}`},
             });
             setNewComment("");
+            // refresh feed to show the new comment
+            const feedData = await fetchFeed(viewingUserId);
+            setFeed(feedData);
             setError("");
         } catch (err) {
             console.error("Error adding comment:", err);
             setError("Failed to add comment. Please try again.");
+        }
+    };
+
+    const handleDeletePost = async (postId) => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.delete(`/api/social/post/${postId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            // remove from local state
+            setFeed((prev) => prev.filter((p) => p.id !== postId));
+            setError("");
+        } catch (err) {
+            console.error("Error deleting post:", err);
+            setError("Failed to delete post. Please try again.");
+        }
+    };
+
+    const handleDeleteComment = async (postId, commentId) => {
+        try {
+            const token = localStorage.getItem("token");
+            await axios.delete(`/api/social/post/${postId}/comment/${commentId}`, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            // refresh feed to reflect deletion
+            const feedData = await fetchFeed(viewingUserId);
+            setFeed(feedData);
+            setError("");
+        } catch (err) {
+            console.error("Error deleting comment:", err);
+            setError("Failed to delete comment. Please try again.");
         }
     };
 
@@ -290,6 +336,17 @@ const Profile = () => {
                             <p>{post.text}</p>
                             <p>Stars: {post.starCount}</p>
                             <button onClick={() => handleStar(post.id)}>Star</button>
+                            <button onClick={() => handleDeletePost(post.id)}>Delete Post</button>
+
+                            <div className="comments-list">
+                                {post.comments && post.comments.map((comment) => (
+                                    <div key={comment.id} className="comment">
+                                        <p>{comment.text}</p>
+                                        <button onClick={() => handleDeleteComment(post.id, comment.id)}>Delete</button>
+                                    </div>
+                                ))}
+                            </div>
+
                             <div className="comment-section">
                                 <input
                                     type="text"
