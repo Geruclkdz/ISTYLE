@@ -29,6 +29,78 @@ img.Clothes{
   font-size: 2em !important;
 }
 
+.outfit-top-row{
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  justify-content:flex-start;
+  margin-bottom:0.5rem;
+}
+
+.weather-badge{
+  background:#fff;
+  border:1px solid #ddd;
+  padding:6px 10px;
+  border-radius:12px;
+  font-weight:600;
+  display:inline-flex;
+  align-items:center;
+  gap:0.5rem;
+  box-shadow:0 1px 3px rgba(0,0,0,0.08);
+}
+
+.info-tooltip{
+  position:relative;
+  display:inline-block;
+}
+
+.info-icon{
+  cursor:default;
+  padding:6px 8px;
+  border-radius:6px;
+  background:#f6f6f6;
+  border:1px solid #e1e1e1;
+}
+
+.info-tooltip .tooltip-text{
+  visibility:hidden;
+  width:220px;
+  background-color:#fff;
+  color:#000;
+  text-align:left;
+  border-radius:6px;
+  padding:8px;
+  position:absolute;
+  z-index:1;
+  top:110%;
+  left:50%;
+  transform:translateX(-50%);
+  box-shadow:0 2px 8px rgba(0,0,0,0.15);
+}
+
+.info-tooltip:hover .tooltip-text{ visibility:visible; }
+
+.manual-layer-actions{
+  margin-top:12px;
+  display:flex;
+  gap:10px;
+}
+
+.manual-layer-actions button:disabled{ opacity:0.5; cursor:not-allowed; }
+
+.backend-comments{ margin-top:10px; background:#fafafa; padding:8px; border-radius:6px; border:1px solid #eee; }
+
+.toast{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#333;
+  color:#fff;
+  padding:10px 14px;
+  border-radius:6px;
+  box-shadow:0 2px 6px rgba(0,0,0,0.2);
+}
+
 @media only screen and (max-width: 600px) {
   .outfitCreator > div.content >div >div > img.Clothes{
     height: 13em !important;

@@ -8,12 +8,16 @@ import Image from "../../components/Image/Image";
 
 const OutfitCreator = () => {
     const [outfit, setOutfit] = useState([]);
-    const [missingTypes, setMissingTypes] = useState([]); // New state for missing types
+    const [comments, setComments] = useState([]);
+    const [weather, setWeather] = useState(null);
+    const [midLayerExists, setMidLayerExists] = useState(false);
+    const [outerwearExists, setOuterwearExists] = useState(false);
     const [location, setLocation] = useState(null);
     const [categories, setCategories] = useState([]);
     const [availableCategories, setAvailableCategories] = useState([]);
     const [useWeatherConditions, setUseWeatherConditions] = useState(true);
-    const [error, setError] = useState(""); // To store error messages
+    const [error, setError] = useState("");
+    const [toastMsg, setToastMsg] = useState("");
 
     // Fetch user location
     const getLocation = () => {
@@ -56,12 +60,26 @@ const OutfitCreator = () => {
             const url = hasFilters ? `${baseUrl}&categories=${categories.join(',')}` : baseUrl;
             const response = await axios.get(url);
 
-            const { outfit: outfitData, missingTypes: missing } = response.data || {};
+            const { outfit: outfitData, comments: respComments, weather: respWeather } = response.data || {};
 
-            setOutfit(outfitData || []);
-            setMissingTypes(missing || []);
+            const items = outfitData || [];
+            setOutfit(items);
+            setComments(respComments || []);
+            setWeather(respWeather || null);
 
-            if ((outfitData || []).length === 0) {
+            // determine existing layers
+            const hasMid = items.some((it) => {
+                const t = it?.type?.name || it?.type || "";
+                return String(t).toLowerCase().includes("mid");
+            });
+            const hasOuter = items.some((it) => {
+                const t = it?.type?.name || it?.type || "";
+                return String(t).toLowerCase().includes("outer");
+            });
+            setMidLayerExists(hasMid);
+            setOuterwearExists(hasOuter);
+
+            if (items.length === 0) {
                 setError("Not enough clothes to create an outfit.");
             } else {
                 setError("");
@@ -94,6 +112,41 @@ const OutfitCreator = () => {
 
     // Toggle weather-based generation
     const toggleWeather = () => setUseWeatherConditions((prev) => !prev);
+
+    // Add Layer handler
+    const handleAddLayer = async (layerType) => {
+        try {
+            const { latitude, longitude } = location || { latitude: null, longitude: null };
+            const baseUrl = `/api/outfits/addLayer?type=${encodeURIComponent(layerType)}&useWeather=${useWeatherConditions}`;
+            const urlWithLoc = (latitude != null && longitude != null) ? `${baseUrl}&lat=${latitude}&lon=${longitude}` : baseUrl;
+            // pass selectedIds so backend can color-match against current outfit
+            const selectedIds = outfit.map((it) => it.id).filter(Boolean);
+            const url = selectedIds.length > 0 ? `${urlWithLoc}&selectedIds=${selectedIds.join(',')}` : urlWithLoc;
+
+            const response = await axios.get(url);
+            const { layer, comments: newComments } = response.data || {};
+            if (layer) {
+                setOutfit((prev) => [...prev, layer]);
+                // update layer presence flags
+                const t = layer?.type?.name || layer?.type || "";
+                if (String(t).toLowerCase().includes("mid")) setMidLayerExists(true);
+                if (String(t).toLowerCase().includes("outer")) setOuterwearExists(true);
+            }
+            if (newComments && newComments.length > 0) {
+                setComments((prev) => [...prev, ...newComments]);
+            }
+            // immediate UI update done
+        } catch (err) {
+            console.error('Failed to add layer', err);
+            showToast('Failed to add layer');
+        }
+    }
+
+    // Helper: show toast
+    const showToast = (msg) => {
+        setToastMsg(msg);
+        setTimeout(() => setToastMsg(""), 4000);
+    };
 
     useEffect(() => {
         getLocation();
@@ -131,6 +184,25 @@ const OutfitCreator = () => {
                         Use Weather Conditions
                     </label>
                 </div>
+                <div className="outfit-top-row">
+                    {weather && (
+                        <div className="weather-badge">
+                            {weather.temperature}°C
+                            <span className="weather-icons">{weather.isRaining ? ' 🌧️' : ''}{weather.isWindy ? ' 💨' : ''}</span>
+                        </div>
+                    )}
+                    {comments && comments.length > 0 && (
+                        <div className="info-tooltip">
+                            <span className="info-icon">ⓘ Notes</span>
+                            <div className="tooltip-text">
+                                <ul>
+                                    {comments.map((c, idx) => <li key={idx}>{c}</li>)}
+                                </ul>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
                 <div className="outfit-container">
                     {outfit.length > 0 ? (
                         outfit.map((item) => (
@@ -149,15 +221,15 @@ const OutfitCreator = () => {
                         </div>
                     )}
                 </div>
-                {missingTypes.length > 0 && (
-                    <div className="missing-clothes">
-                        <h3>Missing Clothing Types:</h3>
-                        <ul>
-                            {missingTypes.map((type, index) => (
-                                <li key={index}>{type}</li>
-                            ))}
-                        </ul>
-                    </div>
+                {/* Buttons for manual layering */}
+                <div className="manual-layer-actions">
+                    <button onClick={() => handleAddLayer('MID_LAYER')} disabled={midLayerExists}>Add Mid-Layer</button>
+                    <button onClick={() => handleAddLayer('OUTERWEAR')} disabled={outerwearExists}>Add Outerwear</button>
+                </div>
+
+                {/* Toast message */}
+                {toastMsg && (
+                    <div className="toast">{toastMsg}</div>
                 )}
                 <div className="actions">
                     <span className="material-symbols-sharp" onClick={saveOutfit}>save</span>
@@ -169,3 +241,6 @@ const OutfitCreator = () => {
 };
 
 export default OutfitCreator;
+
+
+

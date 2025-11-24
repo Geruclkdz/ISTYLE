@@ -46,6 +46,23 @@ public class OutfitController {
         }
     }
 
+    @GetMapping("/addLayer")
+    public ResponseEntity<Map<String, Object>> addLayer(@RequestHeader("Authorization") String authorizationHeader,
+                                                        @RequestParam("type") String type,
+                                                        @RequestParam(value = "lat", required = false) Double latitude,
+                                                        @RequestParam(value = "lon", required = false) Double longitude,
+                                                        @RequestParam(value = "categories", required = false) List<Integer> categories,
+                                                        @RequestParam(value = "useWeather", defaultValue = "false") boolean useWeatherConditions,
+                                                        @RequestParam(value = "selectedIds", required = false) List<Integer> selectedIds) {
+        try {
+            Integer userId = userInterface.getUserIdFromAuthorizationHeader(authorizationHeader);
+            String locationQuery = (latitude != null && longitude != null) ? (latitude + "," + longitude) : "";
+            Map<String, Object> resp = outfitInterface.addLayer(userId, type, locationQuery, categories, useWeatherConditions, selectedIds);
+            return ResponseEntity.ok(resp);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<OutfitDTO> getOutfitByID(@PathVariable Integer id) {
