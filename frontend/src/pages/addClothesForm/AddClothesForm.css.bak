@@ -1,0 +1,19 @@
+// filepath: c:\Users\ggera\Desktop\PracaInż\ISTYLE\frontend\src\pages\addClothesForm\AddClothesForm.css
+#root {
+  display: flex;
+  flex-direction: row;
+}
+
+.addClothes {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1em;
+  color: #ffffff;
+  background-color: #c6c6c6;
+}
+
+.addButton{
+  margin-top: 1em;
+}

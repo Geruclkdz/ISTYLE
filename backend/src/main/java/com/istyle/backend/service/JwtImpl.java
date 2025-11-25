@@ -26,7 +26,7 @@ public class JwtImpl implements JwtInterface {
     private long jwtExpiration;
 
     @Override
-    public String extractEmail(String jwtToken) {
+    public String extractUsername(String jwtToken) {
         return extractClaim(jwtToken, Claims::getSubject);
     }
 
@@ -61,8 +61,8 @@ public class JwtImpl implements JwtInterface {
 
     @Override
     public boolean isTokenValid(String jwtToken, UserDetails userDetails) {
-        final String email = extractEmail(jwtToken);
-        return email.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken);
+        final String usernameFromToken = extractUsername(jwtToken);
+        return usernameFromToken.equals(userDetails.getUsername()) && !isTokenExpired(jwtToken);
     }
 
     private Claims extractAllClaims(String jwtToken) {

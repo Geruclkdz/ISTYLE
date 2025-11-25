@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,13 +43,14 @@ public class UserImpl implements UserInterface {
     @Override
     public Integer getUserIdFromAuthorizationHeader(String authorizationHeader) throws Exception {
         String jwtToken = authorizationHeader.substring(7);
-        String userEmail = jwtInterface.extractEmail(jwtToken);
-        UserDTO user = getUserByEmail(userEmail);
-        if (user != null) {
-            return user.getId();
-        } else {
-            throw new Exception("User not found for email: " + userEmail);
+        String username = jwtInterface.extractUsername(jwtToken);
+
+        Optional<User> byUsername = userRepository.findUserByUsername(username);
+        if (byUsername.isPresent()) {
+            return byUsername.get().getId();
         }
+
+        throw new Exception("User not found for username: " + username);
     }
 
     @Transactional

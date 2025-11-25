@@ -1,38 +1,91 @@
 .dropdown {
     position: relative;
-    display: inline-block;
+    display: inline-block; /* allow menu to size to its content */
+    width: auto;
 }
 
 .dropdown-toggle {
-    padding: 8px 16px;
-    font-size: 16px;
+    padding: 6px 12px;
+    font-size: 14px; /* reduced to fit in one line */
     cursor: pointer;
+    display: inline-block;
+    width: auto;
+    white-space: nowrap;
 }
 
 .dropdown-menu {
     display: block;
     position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
     background-color: white;
     border: 1px solid #ccc;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.12);
     z-index: 1;
-    width: 100%;
-    max-height: 200px;
+    /* remove forced minimum/maximum width so menu can size to its content */
+    min-width: 0;
+    max-width: none;
+    width: auto; /* will size to content because parent is inline-block */
+    max-height: 300px;
     overflow-y: auto;
-    color: #d8d8d8
+    white-space: nowrap; /* make each item stay on one line so menu width matches longest item */
 }
 
 .dropdown-item {
-    padding: 8px 16px;
+    padding: 6px 10px; /* smaller padding to reduce extra space */
 }
 
 .dropdown-item label {
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    /* remove fixed height to allow natural centering */
+    /* height: 20px; */
 }
 
+.dropdown-item .item-check{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    /* remove fixed height to avoid forcing misalignment */
+    /* height: 18px; */
+}
+
+/* stronger override for global input styles that might affect checkboxes */
+.dropdown-item input[type="checkbox"],
+.dropdown-item input[type="radio"]{
+    -webkit-appearance: auto;
+    appearance: auto;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 18px !important;
+    height: 18px !important;
+    padding: 0 !important; /* remove any inherent padding */
+    margin: 0 !important; /* remove any external margin */
+    border: none !important;
+    box-sizing: border-box !important;
+    vertical-align: middle !important;
+    transform: translateY(2px) !important; /* stronger visual centering */
+    position: relative; /* allow manual nudge if still needed */
+}
+
+/* ensure label text vertically centers with the checkbox */
+.dropdown-item .item-text{
+    line-height: 18px; /* match checkbox height for perfect centering */
+}
+
+/* normalize .dropdown-item input rule and remove conflicting height */
 .dropdown-item input {
     margin-right: 8px;
     width: auto !important;
+    flex: 0 0 auto;
+    align-self: center; /* ensure checkbox vertically centered */
+    height: 18px !important; /* unify checkbox size */
+    vertical-align: middle;
+    padding: 0 !important;
+    position: relative;
+    transform: translateY(2px) !important; /* consistent nudge */
 }
 
 .category_check{
@@ -41,5 +94,3 @@
     align-items: flex-start;
     justify-content: flex-start;
 }
-
-

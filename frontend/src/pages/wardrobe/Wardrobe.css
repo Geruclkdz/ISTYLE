@@ -1,25 +1,277 @@
-#root {
-  display: flex;
-  flex-direction: row;
-}
+/* removed page-local #root rule to avoid overriding global layout */
 
 .clothes-container {
   position: relative;
   display: inline-block;
+  overflow: visible; /* ensure hover box is not clipped */
 }
 
+/* Default dropdown inside clothes-container (kept for backward compatibility) */
 .clothes-container .dropdown {
   position: absolute;
-  top: 0;
+  top: 6px;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.12);
   display: none;
 }
 
 .clothes-container:hover .dropdown {
   display: block;
+}
+
+/* Hover actions: two full-width stacked buttons at the top of the item */
+.hover-actions {
+  position: absolute;
+  top: 0;               /* attach to top of the clothes item */
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch; /* children will stretch to full width */
+  gap: 0;               /* no gap so buttons touch each other */
+  z-index: 2000;
+  pointer-events: auto;
+}
+
+/* Force no gap / seam between X and toggle */
+.hover-actions {
+  gap: 0; /* ensure no gap */
+}
+
+/* X button: full width, rounded top corners, permanently red */
+.hover-actions .inline-remove {
+  width: 100%;
+  height: 38px;
+  border-radius: 8px 8px 0 0; /* rounded top corners */
+  border: none;
+  background: #d9534f; /* permanent red */
+  color: #fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  font-weight:600;
+  z-index: 2100; /* above dropdown toggle */
+}
+.hover-actions .inline-remove:hover{
+  background: #c9302c; /* slightly darker on hover */
+  color:#fff;
+}
+
+/* Remove any bottom border/shadow on X */
+.hover-actions .inline-remove{
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+/* Remove wrapper background and shadow so Set Categories sits flush under X without white glow */
+.hover-actions .dropdown{
+  margin: 0; /* ensure no extra gap */
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* Ensure toggle sits flush under X */
+.hover-actions .dropdown .dropdown-toggle{
+  margin-top: 0 !important;
+  border-top: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  position: relative;
+  top: 0;
+}
+
+/* Make the dropdown toggle full width and visually match X (but gray), flush to X */
+.hover-actions .dropdown .dropdown-toggle{
+  width: 100%;
+  height: 38px; /* match X height */
+  padding: 0; /* no extra vertical padding */
+  box-sizing: border-box;
+  border-radius: 0 0 8px 8px; /* rounded bottom corners */
+  background: #efefef; /* light gray */
+  color: #222;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2050;
+  border: none;
+}
+
+/* In case other global rules add borders/padding, force full-width and no extra spacing */
+.hover-actions .dropdown, .hover-actions .dropdown .dropdown-toggle{
+  width: 100% !important;
+  padding: 0 !important;
+  background-clip: padding-box !important;
+}
+
+/* Ensure toggle fully touches X: remove translate and slightly overlap to remove any visible seam */
+.hover-actions .dropdown .dropdown-toggle{
+  transform: none !important;
+  margin-top: -1px !important; /* overlap to remove any visible seam */
+  border-top: none !important;
+  box-shadow: none !important;
+}
+
+/* also ensure X has no bottom rounding or shadow that would create gap */
+.hover-actions .inline-remove{
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Position dropdown menu exactly under the toggle and remove top rounding so it meets toggle edge */
+.hover-actions .dropdown .dropdown-menu{
+  position: absolute !important;
+  top: 100% !important; /* start exactly at the bottom edge of the toggle */
+  left: 0;
+  transform: none;
+  display: block !important;
+  white-space: normal !important;
+  z-index: 200;
+  min-width: 100%;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  background: #fff; /* keep menu items readable */
+  border-radius: 0 0 6px 6px; /* remove top radius so it touches toggle */
+}
+
+/* ensure there is no translate overlap on the toggle */
+.hover-actions .dropdown .dropdown-toggle{
+  transform: none !important;
+  margin-top: 0 !important;
+  border-top: none !important;
+  box-shadow: none !important;
+}
+
+/* ensure dropdown wrapper sits below the X visually */
+.hover-actions .dropdown{
+  position: relative;
+  z-index: 200;
+}
+
+/* hide earlier absolute remove button if present */
+.remove-clothes-btn { display:none !important; }
+
+/* Final strong overrides to ensure exact flush touch between X and toggle */
+.hover-actions .inline-remove{
+  border-bottom: none !important;
+  box-shadow: none !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  z-index: 999999 !important;
+}
+
+.hover-actions .dropdown .dropdown-toggle{
+  margin-top: -2px !important; /* overlap slightly to eliminate seam */
+  border-top: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: #efefef !important;
+  padding: 0 !important;
+  color: #222 !important;
+  width: 100% !important;
+  display: block !important;
+  transform: none !important;
+  position: relative !important;
+  top: 0 !important;
+}
+
+/* remove possible focus ring from other rules */
+.hover-actions .dropdown .dropdown-toggle:focus{ box-shadow: none !important; outline: none !important; }
+
+/* Ultimate flush fixes: remove any leftover borders/padding/pseudo-elements */
+.hover-actions .inline-remove,
+.hover-actions .dropdown .dropdown-toggle {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background-clip: padding-box !important;
+}
+
+/* Force exact stacking and vertical centering */
+.hover-actions .inline-remove{
+  line-height: 38px !important;
+  height: 38px !important;
+  display: block !important;
+}
+
+.hover-actions .dropdown .dropdown-toggle{
+  line-height: 38px !important;
+  height: 38px !important;
+  display: block !important;
+  transform: none !important;
+  translate: none !important;
+}
+
+/* Remove any top border on the dropdown menu itself */
+.hover-actions .dropdown .dropdown-menu{
+  border-top: none !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important; /* keep small padding inside menu items */
+}
+
+/* Remove pseudo-elements from toggle that might create spacing */
+.hover-actions .dropdown .dropdown-toggle::before,
+.hover-actions .dropdown .dropdown-toggle::after{
+  content: none !important;
+}
+
+/* As a catch-all, reset direct child spacing inside hover-actions */
+.hover-actions > * { margin: 0 !important; }
+
+/* Final overlap enforcement to hide remaining seam */
+.hover-actions .inline-remove{
+  margin-bottom: -4px !important; /* pull X down over the toggle */
+  z-index: 1000000 !important;
+}
+
+.hover-actions .dropdown .dropdown-toggle{
+  margin-top: -4px !important; /* pull toggle up under X */
+  border-top: none !important;
+  box-shadow: none !important;
+  background-clip: padding-box !important;
+}
+
+/* Increase bottom border to mask any remaining seam */
+.hover-actions .inline-remove{
+  border-bottom: 2px solid #efefef !important;
+}
+
+.hover-actions .dropdown .dropdown-toggle{
+  margin-top: -4px !important;
+  border-top: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: #efefef !important;
+  padding: 0 !important;
+  color: #222 !important;
+  width: 100% !important;
+  display: block !important;
+  transform: none !important;
+  position: relative !important;
+  top: 0 !important;
+}
+
+/* Very high-specificity overrides to eliminate any remaining seam */
+.clothes-container .hover-actions .inline-remove{
+  margin-bottom: -4px !important;
+  border-bottom: 2px solid #efefef !important;
+  z-index: 10000000 !important;
+}
+
+.clothes-container .hover-actions .dropdown .dropdown-toggle,
+.clothes-container .hover-actions .dropdown-toggle{
+  margin-top: -4px !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: #efefef !important;
+  padding: 0 !important;
 }

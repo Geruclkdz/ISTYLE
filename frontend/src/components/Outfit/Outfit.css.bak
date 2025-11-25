@@ -1,3 +1,4 @@
+// filepath: c:\Users\ggera\Desktop\PracaInż\ISTYLE\frontend\src\components\Outfit\Outfit.css
 .outfitContainer{
     border-radius: 0.5em;
     border: 1px solid #9D9EA2;
@@ -6,13 +7,14 @@
 
 .outfitGrid{
     display:flex;
+    gap:1rem;
     align-items:flex-start;
-    justify-content: center;
 }
 
 .outfitGrid .col{
     display:flex;
     flex-direction:column;
+    gap:0.5rem;
 }
 
 .outfitGrid .col-left{

@@ -1,0 +1,36 @@
+// filepath: c:\Users\ggera\Desktop\PracaInż\ISTYLE\frontend\src\pages\favourites\favourites.css
+.favourites-grid{
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.outfitContainer{
+  width: 220px;
+  height: 220px;
+}
+
+.favouritesGrid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:1rem;
+}
+
+@media (max-width: 900px){
+  .favouritesGrid{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px){
+  .favouritesGrid{
+    grid-template-columns: 1fr;
+  }
+}
+
+.outfitCard{
+  border:1px solid #e5e5e5;
+  padding:8px;
+  border-radius:8px;
+  background:#fff;
+}

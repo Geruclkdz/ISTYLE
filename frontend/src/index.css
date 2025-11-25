@@ -1,26 +1,82 @@
-body {
+/* Base/global styles */
+html, body {
+  height: 100%;
+  width: 100%;
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background: #f6f6f6;
+  overflow-x: hidden; /* prevent horizontal scroll */
 }
+
+/* box-sizing */
+*, *::before, *::after { box-sizing: border-box; }
+
+:root{
+  --muted: #9D9EA2;
+  --surface: #ffffff;
+  --bg: #f6f6f6;
+  --text: #333333;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+}
+
+/* global button styles */
+button, .button, input[type="submit"]{
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 8px;
+  border: none;
+  background: var(--muted);
+  color: var(--surface);
+  cursor: pointer;
+  font-size: 0.95rem;
+}
+
+/* Unified section style: reserve space for fixed nav and center content */
+.section {
+  background: var(--surface);
+  border-radius: 8px;
+  padding: var(--space-lg);
+
+  /* reserve space for the fixed left navigation */
+  margin-left: 220px;
+  margin-right: 16px;
+
+  /* content width control */
+  max-width: calc(100% - 240px); /* account for nav + right margin */
+  overflow-x: hidden; /* prevent internal horizontal scroll */
+}
+
+/* Special case: if a page wrapper needs full-width sections, it can override with .full-width */
+.page.full-width .section {
+  margin-left: 220px;
+  width: calc(100% - 220px);
+  max-width: none;
+}
+
+/* responsive: on small screens remove left offset */
+@media (max-width: 900px) {
+  .section, .page { margin-left: 0; width: 100%; padding-left: var(--space-sm); padding-right: var(--space-sm); }
+  nav { position: fixed; bottom: 0; left: 0; right: 0; height: auto; width: 100%; }
+}
+
+/* helper card style */
+.card {
+  background: var(--surface);
+  border-radius: 10px;
+  padding: var(--space-md);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+/* keep images responsive */
+img{ max-width:100%; height:auto; }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
-html, body{
-  height: 100%;
-  width: 100%;
-}
-
-#root{
-  height: 100%;
-}
-
-
-
-

@@ -27,19 +27,20 @@
   background-color: #9D9EA2
 }
 
-button {
+/* Scope button styles to login/register area only */
+.login-or-register button {
   margin-bottom: 1em;
-  padding: 1em;
+  padding: var(--space-sm) var(--space-md);
   border-radius: 0.5em;
   border: none;
-  background-color: #ddd;
+  background-color: var(--muted);
   font-size: 16px;
   cursor: pointer;
   color: #fff;
 }
 
-
-form {
+/* Scope form styles to login/register area only */
+.login-or-register form {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -49,17 +50,19 @@ form {
   width: 100%;
 }
 
-input {
+/* Scope input styles to login/register area only */
+.login-or-register input {
   margin-bottom: 1em;
-  padding: 0.5em;
+  padding: 0.6em;
   border-radius: 0.5em;
-  border: 1.5px solid #000000;
+  border: 1px solid rgba(0,0,0,0.15);
   font-size: 16px;
   width: 80%;
   box-sizing: border-box;
 }
 
-#submit {
+/* Scope #submit to login/register area only */
+.login-or-register #submit {
   color: #fff;
   padding: 0.5em;
   border-radius: 0.5em;
@@ -68,14 +71,5 @@ input {
   cursor: pointer;
   width: 80%;
   margin: 0;
-  background-color: #9D9EA2;
-}
-
-
-html {
-  height: 100%;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background-color: var(--muted);
 }

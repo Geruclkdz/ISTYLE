@@ -1,0 +1,44 @@
+// filepath: c:\Users\ggera\Desktop\PracaInż\ISTYLE\frontend\src\components\DropdownList\DropdownList.css
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    padding: 8px 16px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.dropdown-menu {
+    display: block;
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    width: 100%;
+    max-height: 200px;
+    overflow-y: auto;
+    color: #d8d8d8
+}
+
+.dropdown-item {
+    padding: 8px 16px;
+}
+
+.dropdown-item label {
+    cursor: pointer;
+}
+
+.dropdown-item input {
+    margin-right: 8px;
+    width: auto !important;
+}
+
+.category_check{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+}

@@ -1,24 +1,16 @@
+// filepath: c:\Users\ggera\Desktop\PracaInż\ISTYLE\frontend\src\components\Navigation\Navigation.css
 nav {
-    width: 220px;
+    width: 20vw;
     height: 100%;
     background: #D9D9D9;
 
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: var(--space-md);
-
-    position: fixed;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    z-index: 100;
-    box-sizing: border-box;
-    flex: 0 0 220px;
 }
 
 nav > img {
-    margin: 1em 0;
+    margin: 1em;
 }
 
 span, a{
@@ -35,26 +27,20 @@ ul {
     list-style-type: none;
     color: #666666;
     height: 100%;
-    margin: 0;
+    margin: 0 auto;
     padding: 0;
     display: flex;
     flex-direction: column;
     position: relative;
-    gap: var(--space-sm);
+
 }
 
 li a {
     text-align: center;
     width: 100%;
     margin: 0 auto;
-    padding: calc(var(--space-sm) + 4px) 0;
+    padding: 0.2em;
     color: #666666;
-    display: block;
-    border-radius: 6px;
-}
-
-li a:hover{
-    background: rgba(0,0,0,0.03);
 }
 
 li:last-child {
@@ -70,13 +56,7 @@ li:last-child {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 0.9em;
-    padding: var(--space-sm) 0;
-}
-
-/* ensure main content has space on the left */
-.page {
-    margin-left: 220px;
+    font-size: 0.8em;
 }
 
 @media only screen and (max-width: 600px) {

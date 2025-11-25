@@ -1,0 +1,26 @@
+// filepath: c:\Users\ggera\Desktop\PracaInż\ISTYLE\frontend\src\pages\wardrobe\Wardrobe.css
+#root {
+  display: flex;
+  flex-direction: row;
+}
+
+.clothes-container {
+  position: relative;
+  display: inline-block;
+}
+
+.clothes-container .dropdown {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: none;
+}
+
+.clothes-container:hover .dropdown {
+  display: block;
+}

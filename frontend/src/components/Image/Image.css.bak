@@ -1,19 +1,14 @@
+// filepath: c:\Users\ggera\Desktop\PracaInż\ISTYLE\frontend\src\components\Image\Image.css
 img.Clothes{
     width: 8em;
     height: 12em;
     object-fit: cover;
     border-radius: 0.5em;
     border: 1px solid #9D9EA2;
-    margin: var(--space-sm);
-    display:block;
+    margin-left: 0;
+    margin-bottom: 0;
     -webkit-box-shadow: inset 12px 12px 46px -31px rgba(0, 0, 0, 1);
     -moz-box-shadow: inset 12px 12px 46px -31px rgba(0, 0, 0, 1);
     box-shadow: inset 12px 12px 46px -31px rgba(0, 0, 0, 1);
-    transition: transform 160ms ease, box-shadow 160ms ease;
-}
-
-img.Clothes:hover{
-    transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
 }
 

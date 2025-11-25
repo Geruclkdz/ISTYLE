@@ -1,3 +1,4 @@
+// filepath: c:\Users\ggera\Desktop\PracaInż\ISTYLE\frontend\src\components\Type\Type.css
 .type {
     width: 100%;
     margin-top: 1em;
@@ -6,10 +7,8 @@
 .images{
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
-    gap: 12px;
+    overflow: auto;
 }
-
 .content {
     color: #d8d8d8;
     font-size: 16px;

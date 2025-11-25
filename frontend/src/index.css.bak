@@ -1,0 +1,24 @@
+// filepath: c:\Users\ggera\Desktop\PracaInż\ISTYLE\frontend\src\index.css
+}
+  height: 100%;
+#root{
+
+}
+  width: 100%;
+  height: 100%;
+html, body{
+
+}
+    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+code {
+
+}
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+    sans-serif;
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  margin: 0;
+body {
+

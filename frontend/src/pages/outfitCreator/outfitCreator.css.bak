@@ -1,3 +1,9 @@
+// filepath: c:\Users\ggera\Desktop\PracaInż\ISTYLE\frontend\src\pages\outfitCreator\outfitCreator.css
+#root {
+  display: flex;
+  flex-direction: row;
+}
+
 img.Clothes{
   height: 9em !important;
   width: 6em !important;
@@ -98,21 +104,26 @@ img.Clothes{
 
 .outfit-container{
   margin-top: 12px;
-  padding: var(--space-md);
-  border-radius: 10px;
-  background: var(--surface);
-  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-  border: 1px solid rgba(0,0,0,0.04);
 }
 
 .outfitGrid{
   display:flex;
+  gap:1.5rem;
   align-items:flex-start;
 }
 
 .outfitGrid .col{
   display:flex;
   flex-direction:column;
+  gap:0.75rem;
+}
+
+.outfitGrid .col-left{
+  width: 180px;
+}
+
+.outfitGrid .col-right{
+  width: 120px;
 }
 
 .col-item.empty{

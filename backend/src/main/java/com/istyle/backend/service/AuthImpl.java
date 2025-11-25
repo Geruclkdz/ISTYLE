@@ -55,15 +55,17 @@ public class AuthImpl implements AuthInterface {
 
     @Override
     public AuthResponse login(AuthRequest request) {
+        // Find user by email first (login by email is required)
+        var user = userRepository.findUserByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Authenticate using username (so that AuthenticationManager/UserDetails use username internally)
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
+                        user.getUsername(),
                         request.getPassword()
                 )
         );
-
-        var user = userRepository.findUserByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
 
         var jwt = jwtInterface.generateToken(user);
         return AuthResponse.builder()

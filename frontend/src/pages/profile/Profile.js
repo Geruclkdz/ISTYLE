@@ -4,6 +4,7 @@ import Navigation from "../../components/Navigation/Navigation";
 import Section from "../../components/Section/Section";
 import axios from "../../axiosConfig";
 import FollowingDropdown from "../../components/FollowingDropdown/FollowingDropdown";
+import Outfit from "../../components/Outfit/Outfit";
 
 const Profile = () => {
     const [feed, setFeed] = useState([]);
@@ -11,7 +12,6 @@ const Profile = () => {
     const [error, setError] = useState("");
     const [profile, setProfile] = useState({photo: "", description: "", username: "", isFollowed: false});
     const [updatedDescription, setUpdatedDescription] = useState("");
-    const [newPhoto, setNewPhoto] = useState(null);
     const [searchResults, setSearchResults] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [viewingUserId, setViewingUserId] = useState(null);
@@ -37,7 +37,7 @@ const Profile = () => {
         const posts = response.data || [];
 
         // fetch comments for each post in parallel and attach to post.comments
-        const postsWithComments = await Promise.all(posts.map(async (post) => {
+        return await Promise.all(posts.map(async (post) => {
             try {
                 const commentsResponse = await axios.get(`/api/social/post/${post.id}/comments`, {
                     headers: { Authorization: `Bearer ${token}` },
@@ -50,8 +50,6 @@ const Profile = () => {
             }
             return post;
         }));
-
-        return postsWithComments;
     };
 
     const checkFollowStatus = async (viewingUserId) => {
@@ -267,57 +265,68 @@ const Profile = () => {
     return (
         <>
             <Navigation/>
-            <div className="page">
+            <div className="page profile-page">
                 <Section text="SEARCH PROFILES">
-                    <input
-                        type="text"
-                        placeholder="Search by username"
-                        value={searchQuery}
-                        onChange={handleInputChange}
-                    />
-                    {searchResults.map((user) => (
-                        <div
-                            key={user.id}
-                            onClick={() => setViewingUserId(user.id)}
-                            className="search-result"
-                        >
-                            <img
-                                src={(user.photo ? ((user.photo.startsWith('http') ? '' : (process.env.REACT_APP_API_URL || 'http://localhost:8080')) + (user.photo.startsWith('/') ? '' : '/')) + user.photo : 'https://via.placeholder.com/50') + (user.photo ? (`${user.photo.includes('?') ? '&' : '?'}t=${Date.now()}`) : '')}
-                                alt="User"/>
-                            <p>{user.username}</p>
+                    <div className="search-row">
+                        <div className="search-left">
+                            <input
+                                type="text"
+                                placeholder="Search by username"
+                                value={searchQuery}
+                                onChange={handleInputChange}
+                            />
+                            <div className="search-results">
+                                {searchResults.map((user) => (
+                                    <div
+                                        key={user.id}
+                                        onClick={() => setViewingUserId(user.id)}
+                                        className="search-result"
+                                    >
+                                        <img
+                                            src={(user.photo ? ((user.photo.startsWith('http') ? '' : (process.env.REACT_APP_API_URL || 'http://localhost:8080')) + (user.photo.startsWith('/') ? '' : '/')) + user.photo : 'https://via.placeholder.com/50') + (user.photo ? (`${user.photo.includes('?') ? '&' : '?'}t=${Date.now()}`) : '')}
+                                            alt="User"/>
+                                        <p>{user.username}</p>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    ))}
-                    <FollowingDropdown
-                        viewingUserId={viewingUserId}
-                        onUserSelect={(userId) => setViewingUserId(userId)}
-                    />
+                        <div className="search-right">
+                            <FollowingDropdown
+                                viewingUserId={viewingUserId}
+                                onUserSelect={(userId) => setViewingUserId(userId)}
+                            />
+                        </div>
+                    </div>
                 </Section>
                 <Section text="PROFILE">
                     {error && <p className="error">{error}</p>}
                     <div className="profile-container">
-                        <img
-                            className="profilePic"
-                            src={(profile.photo ? ((profile.photo.startsWith('http') ? '' : (process.env.REACT_APP_API_URL || 'http://localhost:8080')) + (profile.photo.startsWith('/') ? '' : '/')) + profile.photo : 'https://via.placeholder.com/150') + (profile.photo ? (`${profile.photo.includes('?') ? '&' : '?'}t=${Date.now()}`) : '')}
-                            alt="Profile"
-                            onClick={isEditable ? () => fileInputRef.current.click() : undefined}
-                            style={isEditable ? {cursor: "pointer"} : {}}
-                        />
-                        {isEditable && (
+                        <div className="profile-header">
+                            <img
+                                className="profilePic"
+                                src={(profile.photo ? ((profile.photo.startsWith('http') ? '' : (process.env.REACT_APP_API_URL || 'http://localhost:8080')) + (profile.photo.startsWith('/') ? '' : '/')) + profile.photo : 'https://via.placeholder.com/150') + (profile.photo ? (`${profile.photo.includes('?') ? '&' : '?'}t=${Date.now()}`) : '')}
+                                alt="Profile"
+                                onClick={isEditable ? () => fileInputRef.current.click() : undefined}
+                                style={isEditable ? {cursor: "pointer"} : {}}
+                            />
+                            <div className="profile-details">
+                                <h2>{profile.username}</h2>
+                                {!isEditable && (
+                                    <button onClick={toggleFollow} className="follow-btn">
+                                        {profile.isFollowed ? "Unfollow" : "Follow"}
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+                        {isEditable ? (
                             <input
                                 type="file"
                                 ref={fileInputRef}
                                 style={{display: "none"}}
                                 onChange={handlePhotoUpload}
                             />
-                        )}
-                        <div className="profile-details">
-                            <h2>{profile.username}</h2>
-                            {!isEditable && (
-                                <button onClick={toggleFollow}>
-                                    {profile.isFollowed ? "Unfollow" : "Follow"}
-                                </button>
-                            )}
-                        </div>
+                        ) : null}
+
                         {isEditable ? (
                             <textarea
                                 value={updatedDescription}
@@ -334,6 +343,14 @@ const Profile = () => {
                     {feed.map((post) => (
                         <div key={post.id} className="post">
                             <p>{post.text}</p>
+
+                            {/* Render outfit if present on the post */}
+                            {post.outfitDTO && (
+                                <div className="post-outfit">
+                                    <Outfit outfit={post.outfitDTO} />
+                                </div>
+                            )}
+
                             <p>Stars: {post.starCount}</p>
                             <button onClick={() => handleStar(post.id)}>Star</button>
                             <button onClick={() => handleDeletePost(post.id)}>Delete Post</button>

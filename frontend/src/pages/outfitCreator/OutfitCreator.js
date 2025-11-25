@@ -205,11 +205,50 @@ const OutfitCreator = () => {
 
                 <div className="outfit-container">
                     {outfit.length > 0 ? (
-                        outfit.map((item) => (
-                            <div key={item.id} className="outfit-item">
-                                <Image imageSrc={item.src} alt={item.name} />
-                            </div>
-                        ))
+                        (() => {
+                            // map items to types
+                            const items = outfit || [];
+                            const findByType = (names) => {
+                                const lower = names.map(n => n.toLowerCase());
+                                return items.find(it => {
+                                    const t = (it?.type?.name || it?.type || '').toString().toLowerCase();
+                                    return lower.some(n => t.includes(n));
+                                });
+                            };
+
+                            const topItem = findByType(['top', 'tops']);
+                            const bottomItem = findByType(['bottom', 'bottoms']);
+                            const shoesItem = findByType(['shoe', 'shoes']);
+                            const midItem = findByType(['mid', 'mid-layer', 'mid_layer', 'midlayer']);
+                            const outerItem = findByType(['outer', 'outerwear', 'jacket', 'coat']);
+
+                            return (
+                                <div className="outfitGrid">
+                                    <div className="col col-left">
+                                        {topItem ? (
+                                            <div className="col-item top-item"><Image imageSrc={topItem.src} alt={topItem.name}/></div>
+                                        ) : <div className="col-item empty">Top</div>}
+
+                                        {bottomItem ? (
+                                            <div className="col-item bottom-item"><Image imageSrc={bottomItem.src} alt={bottomItem.name}/></div>
+                                        ) : <div className="col-item empty">Bottom</div>}
+
+                                        {shoesItem ? (
+                                            <div className="col-item shoes-item"><Image imageSrc={shoesItem.src} alt={shoesItem.name}/></div>
+                                        ) : <div className="col-item empty">Shoes</div>}
+                                    </div>
+
+                                    <div className="col col-right">
+                                        {midItem && (
+                                            <div className="col-item mid-item"><Image imageSrc={midItem.src} alt={midItem.name}/></div>
+                                        )}
+                                        {outerItem && (
+                                            <div className="col-item outer-item"><Image imageSrc={outerItem.src} alt={outerItem.name}/></div>
+                                        )}
+                                    </div>
+                                </div>
+                            );
+                        })()
                     ) : (
                         <div className="placeholder">
                             <img
@@ -241,6 +280,3 @@ const OutfitCreator = () => {
 };
 
 export default OutfitCreator;
-
-
-

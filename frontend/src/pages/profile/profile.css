@@ -1,6 +1,5 @@
 #root {
-    display: flex;
-    flex-direction: row;
+    /* do not override global root layout here */
 }
 
 .profilePic {
@@ -10,10 +9,26 @@
     margin: 1em;
 }
 
-.page {
+/* Profile page wrapper sits next to fixed nav (Option A) */
+.profile-page{
+    margin-left: 220px;
+    width: calc(100% - 220px);
+    box-sizing: border-box;
+}
+
+.page{
     display: flex;
     flex-direction: column;
-    width: 75%;
+    flex: 1 1 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* sections inside profile-page should not have left offset */
+.profile-page .section{
+    margin-left: 0;
+    padding-left: var(--space-lg);
+    padding-right: var(--space-lg);
 }
 
 .fitPic{
@@ -27,4 +42,169 @@
         -moz-box-shadow: inset 12px 12px 46px -31px rgba(0, 0, 0, 1);
         box-shadow: inset 12px 12px 46px -31px rgba(0, 0, 0, 1);
 
+}
+
+.profile-container{
+    display:flex;
+    flex-direction:column;
+    gap:0.5rem;
+}
+
+.profile-header{
+    display:flex;
+    align-items:center;
+    gap:0.75rem;
+}
+
+.profile-details{
+    display:flex;
+    flex-direction:column;
+    gap:0.25rem;
+}
+
+.profile-details h2{
+    margin:0;
+    font-size:1.25rem;
+}
+
+.follow-btn{
+    padding:6px 10px;
+    background: var(--muted);
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.post{
+    background: #fff;
+    border: 1px solid #e6e6e6;
+    padding: 0.75rem;
+    margin: 0.75rem 0;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+}
+
+.post p{
+    margin: 0.5rem 0;
+}
+
+.post-outfit{
+    margin: 0.5rem 0;
+    display:flex;
+    justify-content:flex-start;
+    align-items:flex-start;
+    gap: 1rem;
+    /* ensure outfit component can shrink on small screens */
+    max-width: 100%;
+}
+
+/* ensure the Outfit component inside posts scales nicely */
+.post-outfit .outfitGrid{
+    width: auto;
+    max-width: 420px; /* reasonable width for post preview */
+}
+
+/* comments styling adjustments */
+.comments-list{
+    margin-top: 0.5rem;
+}
+
+.comment{
+    border-top: 1px dashed #eee;
+    padding: 0.5rem 0;
+}
+
+/* Small spacing ('pudding') for buttons and inputs in profile */
+.profile-page button {
+
+    border-radius: 6px;
+}
+
+/* Ensure follow button keeps its look but aligns with general spacing */
+.profile-page .follow-btn {
+    margin: 0.35rem 0 0.35rem 0;
+}
+
+/* Space under search input and compact layout for search results */
+.profile-page input[type="text"],
+.profile-page textarea {
+    margin-bottom: 0.5rem;
+}
+
+.profile-page .search-result{
+    display:flex;
+    align-items:center;
+    gap:0.5rem;
+    padding:0.25rem 0;
+    margin-bottom:0.25rem;
+}
+
+/* Spacing for action buttons inside posts (star, delete, comment) */
+.profile-page .post button {
+    margin-right: 0.5rem;
+}
+
+/* Make comment input and its button spaced nicely */
+.profile-page .comment-section input[type="text"] {
+    margin-right: 0.5rem;
+}
+
+/* Search row two-column layout */
+.search-row{
+  display:flex;
+  gap:1rem;
+  align-items:flex-start;
+}
+
+.search-left{
+  flex: 0 0 50%;
+  min-width:0; /* allow input to shrink on small screens */
+}
+
+.search-right{
+  flex: 0 0 50%; /* now occupies 50% */
+  max-width: 50%;
+}
+
+.search-left input[type="text"]{
+  width:100%;
+  box-sizing:border-box;
+  padding:0.5rem;
+  border-radius:6px;
+  border:1px solid #ddd;
+}
+
+.search-results{
+  margin-top:0.5rem;
+  display:flex;
+  flex-direction:column;
+  gap:0.25rem;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* make each search-result align nicely */
+.search-result{
+  display:flex;
+  align-items:center;
+  gap:0.5rem;
+  padding:0.4rem;
+  cursor:pointer;
+  border-radius:6px;
+}
+
+.search-result:hover{
+  background: #f8f8f8;
+}
+
+/* small screens: stack columns */
+@media (max-width: 700px) {
+  .search-row{
+    flex-direction:column;
+  }
+  .search-right{
+    max-width:100%;
+    flex: 1 1 100%;
+  }
 }

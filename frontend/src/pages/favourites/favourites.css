@@ -9,3 +9,113 @@
   height: 220px;
 }
 
+.favouritesGrid{
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap:1rem;
+}
+
+@media (max-width: 900px){
+  .favouritesGrid{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px){
+  .favouritesGrid{
+    grid-template-columns: 1fr;
+  }
+}
+
+.outfit-container{
+  position: relative;
+  overflow: hidden;
+}
+
+.outfit-container .overlay{
+  position:absolute;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: rgba(0,0,0,0.45);
+  color:#fff;
+  opacity:0;
+  transition: opacity 150ms ease-in-out;
+  cursor:pointer;
+  font-weight:600;
+}
+
+.outfit-container:hover .overlay{
+  opacity:1;
+}
+
+/* Toast */
+.toast{
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+}
+
+/* make sure outfit fits inside container */
+.outfit-container .outfitGrid{
+  width: 100%;
+  height: 100%;
+}
+
+.modal-backdrop{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index: 1000;
+}
+
+.modal{
+  background:#fff;
+  padding:1rem;
+  border-radius:8px;
+  max-width:600px;
+  width:90%;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+}
+
+.remove-btn{
+  position:absolute;
+  top:8px;
+  right:8px;
+  background: rgba(255,255,255,0.9);
+  border:none;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  cursor:pointer;
+  z-index:5;
+  font-weight:700;
+}
+
+.remove-btn:hover{
+  background: rgba(255,0,0,0.85);
+  color:#fff;
+}
+
+.share-outfit-form textarea{
+  width:100%;
+  min-height:120px;
+  margin-bottom:0.5rem;
+}
+
+.share-actions{
+  display:flex;
+  gap:0.5rem;
+  justify-content:flex-end;
+}

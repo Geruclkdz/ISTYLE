@@ -1,7 +1,6 @@
 package com.istyle.backend.config;
 
 import com.istyle.backend.service.JwtInterface;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,10 +51,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         final String jwtToken = authHeader.substring(7);
         try {
-            final String userEmail = jwtInterface.extractEmail(jwtToken);
+            final String usernameFromToken = jwtInterface.extractUsername(jwtToken);
 
-            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails user = this.userDetailsService.loadUserByUsername(userEmail);
+            if (usernameFromToken  != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails user = this.userDetailsService.loadUserByUsername(usernameFromToken );
 
                 if (jwtInterface.isTokenValid(jwtToken, user)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(

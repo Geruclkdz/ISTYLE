@@ -82,7 +82,7 @@ const DropdownList = ({
                                     checked={selectedItems.some((selected) => selected.id === item.id)}
                                     onChange={(e) => handleItemChange(e, item)}
                                 />
-                                {item.name || 'Unnamed Item'}
+                                <span className="item-text">{item.name || 'Unnamed Item'}</span>
                             </label>
                         </div>
                     ))}

@@ -12,6 +12,24 @@ const Wardrobe = () => {
     const [categories, setCategories] = useState([]); // All available categories
     const [dropdownVisible, setDropdownVisible] = useState({}); // Track visibility of dropdown for each clothing item
 
+    const handleRemoveClothes = async (clothesId) => {
+        try {
+            const token = localStorage.getItem('token');
+            await axios.delete(`/api/clothes/${clothesId}`, { headers: { Authorization: `Bearer ${token}` } });
+            // Remove from local state
+            setClothesByType(prev => {
+                const updated = {};
+                for (const type in prev) {
+                    updated[type] = prev[type].filter(item => item.id !== clothesId);
+                }
+                return updated;
+            });
+            console.log('Clothes removed:', clothesId);
+        } catch (err) {
+            console.error('Failed to remove clothes', err);
+        }
+    };
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -99,20 +117,23 @@ const Wardrobe = () => {
                             >
                                 <Image imageSrc={clothesItem.src} />
                                 {dropdownVisible[clothesItem.id] && (
-                                    <DropdownList
-                                        items={categories} // All available categories
-                                        selectedItems={clothesItem.categories} // Pre-select categories the clothing item belongs to
-                                        onSelectionChange={(selected) =>
-                                            handleCategoryChange(clothesItem.id, selected)
-                                        }
-                                        allowMultiple={true}
-                                        placeholder="Set Categories"
-                                    />
+                                    <div className="hover-actions">
+                                        <button className="inline-remove" onClick={(e) => { e.stopPropagation(); handleRemoveClothes(clothesItem.id); }}>✕</button>
+                                        <DropdownList
+                                            items={categories} // All available categories
+                                            selectedItems={clothesItem.categories} // Pre-select categories the clothing item belongs to
+                                            onSelectionChange={(selected) =>
+                                                handleCategoryChange(clothesItem.id, selected)
+                                            }
+                                            allowMultiple={true}
+                                            placeholder="Set Categories"
+                                        />
+                                    </div>
                                 )}
-                            </div>
-                        ))}
-                    </Type>
-                ))}
+                             </div>
+                         ))}
+                     </Type>
+                 ))}
             </Section>
         </>
     );

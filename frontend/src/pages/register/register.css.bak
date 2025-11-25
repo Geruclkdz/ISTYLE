@@ -1,3 +1,4 @@
+// filepath: c:\Users\ggera\Desktop\PracaInż\ISTYLE\frontend\src\pages\register\register.css
 .container {
   display: flex;
   flex-direction: column;
@@ -27,21 +28,19 @@
   background-color: #9D9EA2
 }
 
-/* Scope button styles to login/register area only */
-.login-or-register button {
+button {
   margin-bottom: 1em;
-  padding: var(--space-sm) var(--space-md);
+  padding: 1em;
   border-radius: 0.5em;
   border: none;
-  background-color: var(--muted);
+  background-color: #ddd;
   font-size: 16px;
   cursor: pointer;
   color: #fff;
 }
 
 
-/* Scope form styles to login/register area only */
-.login-or-register form {
+form {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -51,18 +50,17 @@
   width: 100%;
 }
 
-.login-or-register input{
+input{
   margin-bottom: 1em;
-  padding: 0.6em;
+  padding: 0.5em;
   border-radius: 0.5em;
-  border: 1px solid rgba(0,0,0,0.15);
+  border: 1.5px solid #000000;
   font-size: 16px;
   width: 80%;
   box-sizing: border-box;
 }
 
-/* Scope #submit to login/register area only */
-.login-or-register #submit {
+#submit {
   color: #fff;
   padding: 0.5em;
   border-radius: 0.5em;
@@ -71,5 +69,5 @@
   cursor: pointer;
   width: 80%;
   margin: 0;
-  background-color: var(--muted);
+  background-color: #9D9EA2;
 }
