@@ -1,94 +1,70 @@
-.dropdown {
-    position: relative;
-    display: block; /* take full width of parent column */
-    width: 100%;
+.following-dropdown {
+  position: relative;
+  display: block;
+  width: 100%;
 }
 
-.dropdown-toggle {
-    padding: 8px 12px;
-    background-color: var(--muted);
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 6px;
-    width: 100%;
-    text-align: left;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
+.following-toggle {
+  padding: 8px 12px;
+  background-color: var(--muted);
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+  width: 97%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
-.dropdown-toggle::after{
-    content: '\25BC';
-    font-size: 0.7rem;
-    opacity: 0.9;
+.following-toggle::after{
+  content: '\25BC';
+  font-size: 0.7rem;
+  opacity: 0.9;
 }
 
-.dropdown-list {
-    /* flow in the document so it expands the parent section instead of overlaying it */
-    position: relative;
-    top: auto;
-    left: auto;
-    background-color: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    width: 100%;
-    max-height: none; /* allow the list to grow and push the page */
-    overflow: visible;
-    z-index: 1;
-    list-style: none;
-    padding: 0.25rem 0;
-    margin: 0.5rem 0 0 0; /* small gap from the toggle */
-    box-shadow: 0 6px 18px rgba(0,0,0,0.04);
-    display: block; /* ensure it's a block-level container */
-    box-sizing: border-box;
+/* Ensure the list is block-level and each item flows vertically without overlap */
+.following-list{
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.dropdown-list li {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
-    cursor: pointer;
-    gap: 12px;
-    box-sizing: border-box;
-    width: 100%;
-    min-height: 44px; /* ensure each item has its own height */
-    line-height: 1.2;
-    /* clear: both; removed as it may cause layout issues */
-    background: #fff; /* ensure each row has white background */
-    border-bottom: 1px solid #f0f0f0; /* visual separation */
-    overflow: hidden; /* prevent child overflow */
-    position: relative; /* explicit positioning context */
+.following-list li{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  min-height: 44px; /* ensure clickable area and no overlap */
+  box-sizing: border-box;
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+  position: relative; /* avoid absolute positioning */
 }
 
-.dropdown-list li > img {
-    display: block; /* prevent inline/float overlap */
+.following-list img{
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: 0 0 36px; /* reserve space for avatar */
 }
 
-.dropdown-list img {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 8px;
-    flex: 0 0 36px; /* fixed space for avatar so text sits beside it */
-}
-
-.dropdown-list span{
-    font-size: 0.95rem;
-    color: #222;
-    display: block;
-    vertical-align: middle;
-    word-break: break-word;
-    flex: 1 1 auto; /* let text take remaining space and wrap */
-    white-space: normal;
+.following-list span{
+  flex: 1 1 auto;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* small screens: ensure dropdown fits the column */
 @media (max-width: 700px) {
-    .dropdown-list {
-        position: relative;
-        top: 8px;
-    }
+  .following-list{
+    max-height: 220px;
+    overflow-y: auto;
+  }
 }

@@ -61,7 +61,7 @@ const Favourites = () => {
     return (
         <>
             <Navigation/>
-            <Section text="FAVOURITES OUTFITS" className="favourites">
+            <Section text="OUTFITS" className="favourites">
                 <div className="favouritesGrid">
                     {outfits.map((outfit, index) => (
                         <div key={index} className="outfit-container">

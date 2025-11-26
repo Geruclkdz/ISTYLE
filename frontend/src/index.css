@@ -8,7 +8,7 @@ html, body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #f6f6f6;
+  background: #ffffff;
   overflow-x: hidden; /* prevent horizontal scroll */
 }
 

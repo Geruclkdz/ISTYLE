@@ -4,11 +4,6 @@
   gap: 16px;
 }
 
-.outfitContainer{
-  width: 220px;
-  height: 220px;
-}
-
 .favouritesGrid{
   display:grid;
   grid-template-columns: repeat(3, 1fr);
@@ -109,7 +104,7 @@
 }
 
 .share-outfit-form textarea{
-  width:100%;
+  width:80%;
   min-height:120px;
   margin-bottom:0.5rem;
 }

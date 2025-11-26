@@ -359,7 +359,7 @@ const Profile = () => {
                                 {post.comments && post.comments.map((comment) => (
                                     <div key={comment.id} className="comment">
                                         <p>{comment.text}</p>
-                                        <button onClick={() => handleDeleteComment(post.id, comment.id)}>Delete</button>
+                                        <button onClick={() => handleDeleteComment(post.id, comment.id)}>Delete Comment</button>
                                     </div>
                                 ))}
                             </div>

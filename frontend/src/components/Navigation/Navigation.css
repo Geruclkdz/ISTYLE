@@ -21,7 +21,7 @@ nav > img {
     margin: 1em 0;
 }
 
-span, a{
+nav span, a{
     text-decoration: none;
     display: inline-block;
     line-height: 2em;

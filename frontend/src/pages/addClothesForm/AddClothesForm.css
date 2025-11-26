@@ -1,21 +1,33 @@
 .addClothes {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin-top: 1em;
-  color: #ffffff;
-  background-color: #e9e9e9;
-  padding: var(--space-md);
-  border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1em;
+    color: #ffffff;
+    background-color: #e9e9e9;
+    padding: var(--space-md);
+    border-radius: 8px;
+    gap: 0.8em;
+    margin-bottom: 10em;
 }
 
-.addButton{
-  margin-top: 1em;
-  padding: var(--space-sm) var(--space-md);
-  background: var(--muted);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
+.addClothes .dropdown{
+    color: #9D9EA2;
+}
+
+.addClothes .dropdown-toggle{
+    width: 18em;
+}
+
+
+
+.addButton {
+    margin-top: 1em;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--muted);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import axios from "../../axiosConfig";
 import "./FollowingDropdown.css";
 
 const FollowingDropdown = ({ viewingUserId, onUserSelect }) => {
@@ -23,15 +23,15 @@ const FollowingDropdown = ({ viewingUserId, onUserSelect }) => {
     }, [viewingUserId]);
 
     return (
-        <div className="dropdown">
+        <div className="following-dropdown">
             <button
-                className="dropdown-toggle"
+                className="following-toggle"
                 onClick={() => setDropdownOpen((prev) => !prev)}
             >
                 Following
             </button>
             {dropdownOpen && (
-                <ul className="dropdown-list">
+                <ul className="following-list">
                     {followingList.map((user) => (
                         <li key={user.id} onClick={() => onUserSelect(user.id)}>
                             <img

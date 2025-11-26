@@ -126,7 +126,6 @@ const AddClothesForm = () => {
             <Section text="ADD CLOTHES">
                 <form onSubmit={handleSubmit} className="addClothes">
                     <label>
-                        Upload Image:
                         <input type="file" name="image" onChange={handleChange} />
                     </label>
                     <DropdownList

@@ -3,7 +3,7 @@ import Navigation from "../../components/Navigation/Navigation";
 import Section from "../../components/Section/Section";
 import DropdownList from "../../components/DropdownList/DropdownList";
 import axios from "../../axiosConfig";
-import { useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import Image from "../../components/Image/Image";
 
 const OutfitCreator = () => {
@@ -24,12 +24,12 @@ const OutfitCreator = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    const { latitude, longitude } = position.coords;
-                    setLocation({ latitude, longitude });
+                    const {latitude, longitude} = position.coords;
+                    setLocation({latitude, longitude});
                 },
                 (error) => {
                     console.error("Error fetching location:", error);
-                    setLocation({ latitude: 48.8567, longitude: 2.3508 }); // Default to Paris
+                    setLocation({latitude: 48.8567, longitude: 2.3508}); // Default to Paris
                 }
             );
         } else {
@@ -54,13 +54,13 @@ const OutfitCreator = () => {
         if (!location) return;
 
         try {
-            const { latitude, longitude } = location;
+            const {latitude, longitude} = location;
             const hasFilters = categories && categories.length > 0;
             const baseUrl = `/api/outfits/create?lat=${latitude}&lon=${longitude}&useWeather=${useWeatherConditions}`;
             const url = hasFilters ? `${baseUrl}&categories=${categories.join(',')}` : baseUrl;
             const response = await axios.get(url);
 
-            const { outfit: outfitData, comments: respComments, weather: respWeather } = response.data || {};
+            const {outfit: outfitData, comments: respComments, weather: respWeather} = response.data || {};
 
             const items = outfitData || [];
             setOutfit(items);
@@ -116,7 +116,7 @@ const OutfitCreator = () => {
     // Add Layer handler
     const handleAddLayer = async (layerType) => {
         try {
-            const { latitude, longitude } = location || { latitude: null, longitude: null };
+            const {latitude, longitude} = location || {latitude: null, longitude: null};
             const baseUrl = `/api/outfits/addLayer?type=${encodeURIComponent(layerType)}&useWeather=${useWeatherConditions}`;
             const urlWithLoc = (latitude != null && longitude != null) ? `${baseUrl}&lat=${latitude}&lon=${longitude}` : baseUrl;
             // pass selectedIds so backend can color-match against current outfit
@@ -124,7 +124,7 @@ const OutfitCreator = () => {
             const url = selectedIds.length > 0 ? `${urlWithLoc}&selectedIds=${selectedIds.join(',')}` : urlWithLoc;
 
             const response = await axios.get(url);
-            const { layer, comments: newComments } = response.data || {};
+            const {layer, comments: newComments} = response.data || {};
             if (layer) {
                 setOutfit((prev) => [...prev, layer]);
                 // update layer presence flags
@@ -159,121 +159,130 @@ const OutfitCreator = () => {
 
     return (
         <>
-            <Navigation />
+            <Navigation/>
             <Section text="CREATE YOUR OUTFIT" className="outfitCreator">
-                <div className="controls">
-                    <DropdownList
-                        items={availableCategories.map((cat) => ({
-                            id: cat?.id || 0,
-                            name: cat?.name || "Unknown",
-                        }))}
-                        selectedItems={categories.map((id) => ({
-                            id,
-                            name: availableCategories.find((cat) => cat.id === id)?.name || "Unknown",
-                        }))}
-                        onSelectionChange={(selected) => setCategories(selected.map((item) => item.id))}
-                        allowMultiple={true}
-                        placeholder="Select Categories"
-                    />
-                    <label className="weather-toggle">
-                        <input
-                            type="checkbox"
-                            checked={useWeatherConditions}
-                            onChange={toggleWeather}
+                <div className="side-menu">
+                    <div className="controls">
+                        <DropdownList
+                            items={availableCategories.map((cat) => ({
+                                id: cat?.id || 0,
+                                name: cat?.name || "Unknown",
+                            }))}
+                            selectedItems={categories.map((id) => ({
+                                id,
+                                name: availableCategories.find((cat) => cat.id === id)?.name || "Unknown",
+                            }))}
+                            onSelectionChange={(selected) => setCategories(selected.map((item) => item.id))}
+                            allowMultiple={true}
+                            placeholder="Select Categories"
                         />
-                        Use Weather Conditions
-                    </label>
-                </div>
-                <div className="outfit-top-row">
-                    {weather && (
-                        <div className="weather-badge">
-                            {weather.temperature}°C
-                            <span className="weather-icons">{weather.isRaining ? ' 🌧️' : ''}{weather.isWindy ? ' 💨' : ''}</span>
-                        </div>
-                    )}
-                    {comments && comments.length > 0 && (
-                        <div className="info-tooltip">
-                            <span className="info-icon">ⓘ Notes</span>
-                            <div className="tooltip-text">
-                                <ul>
-                                    {comments.map((c, idx) => <li key={idx}>{c}</li>)}
-                                </ul>
-                            </div>
-                        </div>
-                    )}
-                </div>
-
-                <div className="outfit-container">
-                    {outfit.length > 0 ? (
-                        (() => {
-                            // map items to types
-                            const items = outfit || [];
-                            const findByType = (names) => {
-                                const lower = names.map(n => n.toLowerCase());
-                                return items.find(it => {
-                                    const t = (it?.type?.name || it?.type || '').toString().toLowerCase();
-                                    return lower.some(n => t.includes(n));
-                                });
-                            };
-
-                            const topItem = findByType(['top', 'tops']);
-                            const bottomItem = findByType(['bottom', 'bottoms']);
-                            const shoesItem = findByType(['shoe', 'shoes']);
-                            const midItem = findByType(['mid', 'mid-layer', 'mid_layer', 'midlayer']);
-                            const outerItem = findByType(['outer', 'outerwear', 'jacket', 'coat']);
-
-                            return (
-                                <div className="outfitGrid">
-                                    <div className="col col-left">
-                                        {topItem ? (
-                                            <div className="col-item top-item"><Image imageSrc={topItem.src} alt={topItem.name}/></div>
-                                        ) : <div className="col-item empty">Top</div>}
-
-                                        {bottomItem ? (
-                                            <div className="col-item bottom-item"><Image imageSrc={bottomItem.src} alt={bottomItem.name}/></div>
-                                        ) : <div className="col-item empty">Bottom</div>}
-
-                                        {shoesItem ? (
-                                            <div className="col-item shoes-item"><Image imageSrc={shoesItem.src} alt={shoesItem.name}/></div>
-                                        ) : <div className="col-item empty">Shoes</div>}
-                                    </div>
-
-                                    <div className="col col-right">
-                                        {midItem && (
-                                            <div className="col-item mid-item"><Image imageSrc={midItem.src} alt={midItem.name}/></div>
-                                        )}
-                                        {outerItem && (
-                                            <div className="col-item outer-item"><Image imageSrc={outerItem.src} alt={outerItem.name}/></div>
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        })()
-                    ) : (
-                        <div className="placeholder">
-                            <img
-                                src="https://via.placeholder.com/150"
-                                alt="Placeholder"
-                                className="placeholder-image"
+                        <label className="weather-toggle">
+                            <input
+                                type="checkbox"
+                                checked={useWeatherConditions}
+                                onChange={toggleWeather}
                             />
-                            <p>{error || "Loading outfit..."}</p>
-                        </div>
-                    )}
+                            Use Weather Conditions
+                        </label>
+                    </div>
+                    <div className="outfit-top-row">
+                        {weather && (
+                            <div className="weather-badge">
+                                {weather.temperature}°C
+                                <span
+                                    className="weather-icons">{weather.isRaining ? ' 🌧️' : ''}{weather.isWindy ? ' 💨' : ''}</span>
+                            </div>
+                        )}
+                        {comments && comments.length > 0 && (
+                            <div className="info-tooltip">
+                                <span className="info-icon">ⓘ Notes</span>
+                                <div className="tooltip-text">
+                                    <ul>
+                                        {comments.map((c, idx) => <li key={idx}>{c}</li>)}
+                                    </ul>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                    <div className="manual-layer-actions">
+                        <button onClick={() => handleAddLayer('MID_LAYER')} disabled={midLayerExists}>Add Mid-Layer
+                        </button>
+                        <button onClick={() => handleAddLayer('OUTERWEAR')} disabled={outerwearExists}>Add Outerwear
+                        </button>
+                    </div>
                 </div>
-                {/* Buttons for manual layering */}
-                <div className="manual-layer-actions">
-                    <button onClick={() => handleAddLayer('MID_LAYER')} disabled={midLayerExists}>Add Mid-Layer</button>
-                    <button onClick={() => handleAddLayer('OUTERWEAR')} disabled={outerwearExists}>Add Outerwear</button>
-                </div>
+                <div className="main-menu">
+                        {outfit.length > 0 ? (
+                            (() => {
+                                // map items to types
+                                const items = outfit || [];
+                                const findByType = (names) => {
+                                    const lower = names.map(n => n.toLowerCase());
+                                    return items.find(it => {
+                                        const t = (it?.type?.name || it?.type || '').toString().toLowerCase();
+                                        return lower.some(n => t.includes(n));
+                                    });
+                                };
 
-                {/* Toast message */}
-                {toastMsg && (
-                    <div className="toast">{toastMsg}</div>
-                )}
-                <div className="actions">
-                    <span className="material-symbols-sharp" onClick={saveOutfit}>save</span>
-                    <span className="material-symbols-sharp" onClick={fetchData}>refresh</span>
-                </div>
+                                const topItem = findByType(['top', 'tops']);
+                                const bottomItem = findByType(['bottom', 'bottoms']);
+                                const shoesItem = findByType(['shoe', 'shoes']);
+                                const midItem = findByType(['mid', 'mid-layer', 'mid_layer', 'midlayer']);
+                                const outerItem = findByType(['outer', 'outerwear', 'jacket', 'coat']);
+
+                                return (
+                                    <div className="outfitGrid">
+                                        <div className="col col-left">
+                                            {topItem ? (
+                                                <div className="col-item top-item"><Image imageSrc={topItem.src}
+                                                                                          alt={topItem.name}/></div>
+                                            ) : <div className="col-item empty">Top</div>}
+
+                                            {bottomItem ? (
+                                                <div className="col-item bottom-item"><Image imageSrc={bottomItem.src}
+                                                                                             alt={bottomItem.name}/>
+                                                </div>
+                                            ) : <div className="col-item empty">Bottom</div>}
+
+                                            {shoesItem ? (
+                                                <div className="col-item shoes-item"><Image imageSrc={shoesItem.src}
+                                                                                            alt={shoesItem.name}/></div>
+                                            ) : <div className="col-item empty">Shoes</div>}
+                                        </div>
+
+                                        <div className="col col-right">
+                                            {midItem && (
+                                                <div className="col-item mid-item"><Image imageSrc={midItem.src}
+                                                                                          alt={midItem.name}/></div>
+                                            )}
+                                            {outerItem && (
+                                                <div className="col-item outer-item"><Image imageSrc={outerItem.src}
+                                                                                            alt={outerItem.name}/></div>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })()
+                        ) : (
+                            <div className="placeholder">
+                                <img
+                                    src="https://via.placeholder.com/150"
+                                    alt="Placeholder"
+                                    className="placeholder-image"
+                                />
+                                <p>{error || "Loading outfit..."}</p>
+                            </div>
+                        )}
+                    <div className="actions">
+                        <span className="material-symbols-sharp" onClick={saveOutfit}>save</span>
+                        <span className="material-symbols-sharp" onClick={fetchData}>refresh</span>
+                    </div>
+                    </div>
+
+                    {toastMsg && (
+                        <div className="toast">{toastMsg}</div>
+                    )}
+
             </Section>
         </>
     );
