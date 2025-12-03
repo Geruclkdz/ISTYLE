@@ -80,7 +80,10 @@ public class OutfitImpl implements OutfitInterface {
             // Normalize external weather data into required fields (temperature in Celsius, isRaining, isWindy)
             Object tempObj = weatherDataRaw.getOrDefault("temperature", weatherDataRaw.getOrDefault("temp_c", 25.0));
             if (tempObj instanceof Number) temperature = ((Number) tempObj).doubleValue();
-            else try { temperature = Double.parseDouble(tempObj.toString()); } catch (Exception ignored) {}
+            else try {
+                temperature = Double.parseDouble(tempObj.toString());
+            } catch (Exception ignored) {
+            }
 
             String condition = String.valueOf(weatherDataRaw.getOrDefault("condition", weatherDataRaw.getOrDefault("weather", ""))).toLowerCase();
             isRaining = condition.contains("rain") || condition.contains("drizzle") || condition.contains("shower");
@@ -88,7 +91,10 @@ public class OutfitImpl implements OutfitInterface {
             Object windObj = weatherDataRaw.getOrDefault("wind_speed_kph", weatherDataRaw.getOrDefault("wind_kph", weatherDataRaw.getOrDefault("wind_mph", 0.0)));
             double windKph = 0.0;
             if (windObj instanceof Number) windKph = ((Number) windObj).doubleValue();
-            else try { windKph = Double.parseDouble(windObj.toString()); } catch (Exception ignored) {}
+            else try {
+                windKph = Double.parseDouble(windObj.toString());
+            } catch (Exception ignored) {
+            }
             // Decide windy by threshold (kph)
             isWindy = windKph > 20.0;
 
@@ -126,8 +132,10 @@ public class OutfitImpl implements OutfitInterface {
         selectLayerGeneric("Shoes", clothesByType, selectedOutfit, selectedHues, comments, isRaining, isWindy);
 
         if (useWeatherConditions) {
-            if (needMidLayer) selectLayerGeneric("Mid-Layers", clothesByType, selectedOutfit, selectedHues, comments, isRaining, isWindy);
-            if (needOuterwear) selectLayerGeneric("Outerwear", clothesByType, selectedOutfit, selectedHues, comments, isRaining, isWindy);
+            if (needMidLayer)
+                selectLayerGeneric("Mid-Layers", clothesByType, selectedOutfit, selectedHues, comments, isRaining, isWindy);
+            if (needOuterwear)
+                selectLayerGeneric("Outerwear", clothesByType, selectedOutfit, selectedHues, comments, isRaining, isWindy);
         }
 
         // Prepare result (backward compatibility: include missingTypes key too)
@@ -215,7 +223,7 @@ public class OutfitImpl implements OutfitInterface {
         }
 
         // final fallback: random
-        comments.add("No suitable color match found. Using random item. [" + type + "]");
+        comments.add("No suitable color or weather-resistant match found. Using random item. [" + type + "]");
         return uniformPick(candidates);
     }
 
@@ -317,13 +325,19 @@ public class OutfitImpl implements OutfitInterface {
             Map<String, Object> weatherDataRaw = weatherService.getWeather(location);
             Object tempObj = weatherDataRaw.getOrDefault("temperature", weatherDataRaw.getOrDefault("temp_c", 25.0));
             if (tempObj instanceof Number) temperature = ((Number) tempObj).doubleValue();
-            else try { temperature = Double.parseDouble(tempObj.toString()); } catch (Exception ignored) {}
+            else try {
+                temperature = Double.parseDouble(tempObj.toString());
+            } catch (Exception ignored) {
+            }
             String condition = String.valueOf(weatherDataRaw.getOrDefault("condition", weatherDataRaw.getOrDefault("weather", ""))).toLowerCase();
             isRaining = condition.contains("rain") || condition.contains("drizzle") || condition.contains("shower");
             Object windObj = weatherDataRaw.getOrDefault("wind_speed_kph", weatherDataRaw.getOrDefault("wind_kph", weatherDataRaw.getOrDefault("wind_mph", 0.0)));
             double windKph = 0.0;
             if (windObj instanceof Number) windKph = ((Number) windObj).doubleValue();
-            else try { windKph = Double.parseDouble(windObj.toString()); } catch (Exception ignored) {}
+            else try {
+                windKph = Double.parseDouble(windObj.toString());
+            } catch (Exception ignored) {
+            }
             // Decide windy by threshold (kph)
             isWindy = windKph > 20.0;
             weatherField = new HashMap<>();

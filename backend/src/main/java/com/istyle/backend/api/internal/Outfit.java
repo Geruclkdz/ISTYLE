@@ -21,7 +21,7 @@ public class Outfit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToMany(cascade = {CascadeType.ALL})
+    @ManyToMany
     @JoinTable(
             name = "outfit_clothes",
             joinColumns = { @JoinColumn(name = "id_outfit")

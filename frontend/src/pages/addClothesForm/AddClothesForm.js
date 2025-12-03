@@ -76,24 +76,6 @@ const AddClothesForm = () => {
         }));
     };
 
-    const handleAddCategory = async (categoryName) => {
-        try {
-            const response = await axios.post('/api/clothes/categories', { name: categoryName });
-            const newCategory = response.data;
-
-            if (!newCategory.id || !newCategory.name) {
-                console.error('New category missing required properties:', newCategory);
-                return;
-            }
-
-            setCategories((prevCategories) => [...prevCategories, newCategory]);
-
-            return newCategory;
-        } catch (error) {
-            console.error('Error adding category:', error);
-        }
-    };
-
     const handleSubmit = async (event) => {
         event.preventDefault();
 
@@ -132,7 +114,8 @@ const AddClothesForm = () => {
                         items={categories}
                         selectedItems={clothes.category}
                         onSelectionChange={handleCategoryChange}
-                        onAddItem={handleAddCategory}
+                        onAddItem={(newCategory) => setCategories((prev) => [...prev, newCategory])}
+                        addUrl={'/api/clothes/categories'}
                         allowMultiple={true}
                         placeholder="Select Categories"
                     />

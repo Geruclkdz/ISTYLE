@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "../../axiosConfig";
 import "./FollowingDropdown.css";
+import buildImageUrl from '../../utils/buildImageUrl';
 
 const FollowingDropdown = ({ viewingUserId, onUserSelect }) => {
     const [followingList, setFollowingList] = useState([]);
@@ -13,7 +14,13 @@ const FollowingDropdown = ({ viewingUserId, onUserSelect }) => {
                 const response = await axios.get("/api/social/following", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
-                setFollowingList(response.data);
+
+                const normalized = (response.data || []).map(u => ({
+                    ...u,
+                    photo: u.photo || u.user_photo || u.user?.photo || u.avatar || u.profilePhoto || null,
+                }));
+
+                setFollowingList(normalized);
             } catch (err) {
                 console.error("Error fetching following list:", err.response?.data || err.message);
             }
@@ -35,8 +42,9 @@ const FollowingDropdown = ({ viewingUserId, onUserSelect }) => {
                     {followingList.map((user) => (
                         <li key={user.id} onClick={() => onUserSelect(user.id)}>
                             <img
-                                src={user.photo || "https://via.placeholder.com/50"}
+                                src={buildImageUrl(user.photo) || undefined}
                                 alt={user.username}
+                                onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://via.placeholder.com/50'; }}
                             />
                             <span>{user.username}</span>
                         </li>

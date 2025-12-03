@@ -90,6 +90,24 @@ const OutfitCreator = () => {
         }
     };
 
+    const handleAddCategory = async (categoryName) => {
+        try {
+            const response = await axios.post('/api/clothes/categories', { name: categoryName });
+            const newCategory = response.data;
+
+            if (!newCategory.id || !newCategory.name) {
+                console.error('New category missing required properties:', newCategory);
+                return;
+            }
+
+            setCategories((prevCategories) => [...prevCategories, newCategory]);
+
+            return newCategory;
+        } catch (error) {
+            console.error('Error adding category:', error);
+        }
+    };
+
     // Save the generated outfit
     const saveOutfit = async () => {
         try {
@@ -175,6 +193,7 @@ const OutfitCreator = () => {
                             onSelectionChange={(selected) => setCategories(selected.map((item) => item.id))}
                             allowMultiple={true}
                             placeholder="Select Categories"
+                            onAddItem={handleAddCategory}
                         />
                         <label className="weather-toggle">
                             <input
@@ -184,6 +203,12 @@ const OutfitCreator = () => {
                             />
                             Use Weather Conditions
                         </label>
+                    </div>
+                    <div className="manual-layer-actions">
+                        <button onClick={() => handleAddLayer('MID_LAYER')} disabled={midLayerExists}>Add Mid-Layer
+                        </button>
+                        <button onClick={() => handleAddLayer('OUTERWEAR')} disabled={outerwearExists}>Add Outerwear
+                        </button>
                     </div>
                     <div className="outfit-top-row">
                         {weather && (
@@ -203,12 +228,6 @@ const OutfitCreator = () => {
                                 </div>
                             </div>
                         )}
-                    </div>
-                    <div className="manual-layer-actions">
-                        <button onClick={() => handleAddLayer('MID_LAYER')} disabled={midLayerExists}>Add Mid-Layer
-                        </button>
-                        <button onClick={() => handleAddLayer('OUTERWEAR')} disabled={outerwearExists}>Add Outerwear
-                        </button>
                     </div>
                 </div>
                 <div className="main-menu">

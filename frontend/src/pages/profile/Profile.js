@@ -5,6 +5,7 @@ import Section from "../../components/Section/Section";
 import axios from "../../axiosConfig";
 import FollowingDropdown from "../../components/FollowingDropdown/FollowingDropdown";
 import Outfit from "../../components/Outfit/Outfit";
+import buildImageUrl from '../../utils/buildImageUrl';
 
 const Profile = () => {
     const [feed, setFeed] = useState([]);
@@ -242,7 +243,10 @@ const Profile = () => {
             const response = await axios.get(`/api/social/profile/search?username=${query}`, {
                 headers: {Authorization: `Bearer ${token}`},
             });
-            const limitedResults = response.data.slice(0, 3);
+            const limitedResults = (response.data || []).slice(0, 3).map(u => ({
+                ...u,
+                photo: u.photo || u.user_photo || u.user?.photo || u.avatar || u.profilePhoto || null,
+            }));
             setSearchResults(limitedResults);
         } catch (err) {
             console.error("Error searching profiles:", err);
@@ -283,8 +287,10 @@ const Profile = () => {
                                         className="search-result"
                                     >
                                         <img
-                                            src={(user.photo ? ((user.photo.startsWith('http') ? '' : (process.env.REACT_APP_API_URL || 'http://localhost:8080')) + (user.photo.startsWith('/') ? '' : '/')) + user.photo : 'https://via.placeholder.com/50') + (user.photo ? (`${user.photo.includes('?') ? '&' : '?'}t=${Date.now()}`) : '')}
-                                            alt="User"/>
+                                            src={buildImageUrl(user.photo) || undefined}
+                                            alt="User"
+                                            onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://via.placeholder.com/50'; }}
+                                        />
                                         <p>{user.username}</p>
                                     </div>
                                 ))}
@@ -304,10 +310,11 @@ const Profile = () => {
                         <div className="profile-header">
                             <img
                                 className="profilePic"
-                                src={(profile.photo ? ((profile.photo.startsWith('http') ? '' : (process.env.REACT_APP_API_URL || 'http://localhost:8080')) + (profile.photo.startsWith('/') ? '' : '/')) + profile.photo : 'https://via.placeholder.com/150') + (profile.photo ? (`${profile.photo.includes('?') ? '&' : '?'}t=${Date.now()}`) : '')}
+                                src={buildImageUrl(profile.photo) || undefined}
                                 alt="Profile"
                                 onClick={isEditable ? () => fileInputRef.current.click() : undefined}
                                 style={isEditable ? {cursor: "pointer"} : {}}
+                                onError={(e) => { e.currentTarget.onerror = null; e.currentTarget.src = 'https://via.placeholder.com/150'; }}
                             />
                             <div className="profile-details">
                                 <h2>{profile.username}</h2>

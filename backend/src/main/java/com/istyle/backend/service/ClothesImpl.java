@@ -48,6 +48,9 @@ public class ClothesImpl implements ClothesInterface {
     private final TypesRepository typesRepository;
     private final ColorInterface colorInterface;
 
+    // Maksymalny rozmiar pliku w bajtach (5 MB)
+    private static final long MAX_FILE_SIZE = 5L * 1024 * 1024;
+
     @Override
     public List<ClothesDTO> getUsersClothes(int userId) {
         return clothesRepository.findByUserId(userId)
@@ -64,6 +67,39 @@ public class ClothesImpl implements ClothesInterface {
     @Override
     public void addClothes(ClothesDTO clothesDTO, int userId, MultipartFile image) {
         try {
+            if (image == null || image.isEmpty()) {
+                throw new IllegalArgumentException("Image file is required");
+            }
+
+            // Weryfikacja rozmiaru z metadanych MultipartFile
+            if (image.getSize() > MAX_FILE_SIZE) {
+                throw new IllegalArgumentException("File too large. Max size is 5 MB");
+            }
+
+            // Odczytaj bajty raz, będziemy ich używać wielokrotnie
+            byte[] originalBytes = image.getBytes();
+            if (originalBytes.length == 0) {
+                throw new IllegalArgumentException("Image file is empty");
+            }
+
+            // Dodatkowa ochrona - rozmiar po odczycie
+            if (originalBytes.length > MAX_FILE_SIZE) {
+                throw new IllegalArgumentException("File too large. Max size is 5 MB");
+            }
+
+            // Weryfikacja content-type
+            String contentType = image.getContentType();
+            if (contentType == null ||
+                    !(contentType.equalsIgnoreCase(MediaType.IMAGE_JPEG_VALUE)
+                            || contentType.equalsIgnoreCase(MediaType.IMAGE_PNG_VALUE))) {
+                throw new IllegalArgumentException("Unsupported file type. Allowed: image/jpeg, image/png");
+            }
+
+            // Weryfikacja magic bytes
+            if (!isJpeg(originalBytes) && !isPng(originalBytes)) {
+                throw new IllegalArgumentException("Invalid image file (magic bytes mismatch). Allowed: JPEG, PNG");
+            }
+
             Clothes clothes = clothesMapper.map(clothesDTO);
 
             User user = userRepository.findById(userId).orElseThrow();
@@ -92,20 +128,23 @@ public class ClothesImpl implements ClothesInterface {
 
             clothes.setSrc(relativeFilePath);
 
-            byte[] imageBytes = eraseBackground(image);
+            // Wywołaj remove.bg na sprawdzonych bajtach
+            byte[] imageBytes = eraseBackground(originalBytes, image.getOriginalFilename());
             String color = colorInterface.determineMainColor(imageBytes);
             clothes.setColor(color);
             clothesRepository.save(clothes);
 
             Path imagePath = Paths.get(fullFilePath);
             Files.write(imagePath, imageBytes);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not read or save image", e);
         } catch (Exception e) {
             throw new RuntimeException("Could not save clothes", e);
         }
     }
 
 
-    private byte[] eraseBackground(MultipartFile image) throws IOException {
+    private byte[] eraseBackground(byte[] imageBytes, String originalFilename) throws IOException {
         RestTemplate restTemplate = new RestTemplate();
 
         HttpHeaders headers = new HttpHeaders();
@@ -113,10 +152,10 @@ public class ClothesImpl implements ClothesInterface {
         headers.add("X-Api-Key", removeBgApiKey);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("image_file", new ByteArrayResource(image.getBytes()) {
+        body.add("image_file", new ByteArrayResource(imageBytes) {
             @Override
             public String getFilename() {
-                return image.getOriginalFilename();
+                return originalFilename != null ? originalFilename : "file";
             }
         });
         body.add("size", "auto");
@@ -137,6 +176,22 @@ public class ClothesImpl implements ClothesInterface {
         }
     }
 
+    // Sprawdza czy bajty odpowiadają plikowi JPEG (zaczyna się od 0xFF 0xD8)
+    private boolean isJpeg(byte[] bytes) {
+        if (bytes == null || bytes.length < 2) return false;
+        return (bytes[0] & 0xFF) == 0xFF && (bytes[1] & 0xFF) == 0xD8;
+    }
+
+    // Sprawdza czy bajty odpowiadają plikowi PNG (pierwsze 8 bajtów)
+    private boolean isPng(byte[] bytes) {
+        if (bytes == null || bytes.length < 8) return false;
+        int[] pngSignature = new int[]{0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A};
+        for (int i = 0; i < pngSignature.length; i++) {
+            if ((bytes[i] & 0xFF) != pngSignature[i]) return false;
+        }
+        return true;
+    }
+
     @Override
     public CategoryDTO addCategory(CategoryDTO categoryDTO, int userId) {
         Category category = new Category();
@@ -149,7 +204,7 @@ public class ClothesImpl implements ClothesInterface {
 
     @Override
     public void deleteClothes(int id) {
-        clothesRepository.deleteById((int) id);
+        clothesRepository.deleteById(id);
     }
 
     @Override

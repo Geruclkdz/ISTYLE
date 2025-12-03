@@ -9,6 +9,7 @@ import com.istyle.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import com.istyle.backend.api.external.CommentDTO;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +27,6 @@ public class FeedImpl implements FeedInterface {
     private final PostMapper postMapper;
     private final FollowRepository followRepository;
     private final OutfitsRepository outfitRepository;
-    private final UserInterface userInterface;
 
     public List<PostDTO> getUserFeed(Integer userId) {
         var posts = postRepository.findFeedByUserId(userId);
@@ -129,6 +129,7 @@ public class FeedImpl implements FeedInterface {
     }
 
     @Override
+    @Transactional
     public void deletePost(Integer postId, Integer userId) {
         Post post = postsRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found"));
         User user = userRepository.getUserById(userId);
@@ -137,6 +138,11 @@ public class FeedImpl implements FeedInterface {
         if (!isOwner && !isModerator) {
             throw new RuntimeException("Forbidden: cannot delete this post");
         }
+
+        // remove stars referencing this post first to avoid FK constraints
+        starsRepository.deleteByPostId(postId);
+
+        // delete post (comments are cascade removed via Post entity)
         postsRepository.delete(post);
     }
 

@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './DropdownList.css';
+import axios from '../../axiosConfig';
 
 const DropdownList = ({
                           items,
                           selectedItems,
                           onSelectionChange,
                           onAddItem = null, // Pass null to disable adding functionality
+                          addUrl = null, // optional endpoint to POST new items (e.g. '/api/clothes/categories')
                           allowMultiple = false, // Toggle between single and multiple selection modes
                           placeholder = 'Select an option',
                           preselectAll = false, // New prop for preselection functionality
@@ -34,11 +36,30 @@ const DropdownList = ({
     const handleKeyPress = async (event) => {
         if (event.key === 'Enter' && newItemName.trim() !== '') {
             event.preventDefault();
-            if (onAddItem) {
-                const newItem = await onAddItem(newItemName);
+            try {
+                let newItem = null;
+                // If addUrl is provided, this component will perform the POST
+                if (addUrl) {
+                    const response = await axios.post(addUrl, { name: newItemName });
+                    newItem = response.data;
+                } else if (onAddItem) {
+                    // Fallback: call parent-provided handler (parent may perform POST and return new item)
+                    newItem = await onAddItem(newItemName);
+                }
+
                 if (newItem) {
+                    // If parent provided an updater callback and we performed the POST here, call it so parent can add to its local list
+                    if (addUrl && typeof onAddItem === 'function') {
+                        try {
+                            onAddItem(newItem);
+                        } catch (err) {
+                            console.error('onAddItem threw an error while updating parent list:', err);
+                        }
+                    }
                     setNewItemName('');
                 }
+            } catch (error) {
+                console.error('Error adding item:', error);
             }
         }
     };
@@ -72,8 +93,8 @@ const DropdownList = ({
             </button>
             {isOpen && (
                 <div className="dropdown-menu">
-                    {items.map((item) => (
-                        <div key={item.id || item.name || Math.random()} className="dropdown-item">
+                    {items.map((item, index) => (
+                        <div key={item.id || item.name || index} className="dropdown-item">
                             <label className="item-check">
                                 <input
                                     type={allowMultiple ? 'checkbox' : 'radio'}
@@ -87,7 +108,7 @@ const DropdownList = ({
                         </div>
                     ))}
 
-                    {onAddItem && (
+                    {(addUrl || onAddItem) && (
                         <div className="dropdown-item">
                             <input
                                 type="text"

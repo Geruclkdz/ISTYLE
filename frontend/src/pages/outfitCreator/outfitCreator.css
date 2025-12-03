@@ -79,6 +79,11 @@ div.outfitCreator .content {
 
 .info-tooltip:hover .tooltip-text {
     visibility: visible;
+
+}
+
+.tooltip-text li{
+    position: relative;
 }
 
 .manual-layer-actions {
